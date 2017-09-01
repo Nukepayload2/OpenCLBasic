@@ -177,17 +177,17 @@ Partial Public Module ClMethods
         Return value
     End Function
 
-    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem, blockingRead As Bool, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem, blockingRead As Boolean, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueReadBuffer(Of T)(commandQueue, buffer, blockingRead, offset, length, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingRead As Bool, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingRead As Boolean, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueReadBuffer(Of T)(commandQueue, buffer, blockingRead, offset, length, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingRead As Bool, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingRead As Boolean, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueReadBuffer(Of T)(commandQueue, buffer, blockingRead, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
@@ -430,12 +430,12 @@ Partial Public Module ClMethods
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueReadBuffer(commandQueue As CommandQueue, buffer As IMem, blockingRead As Bool, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As Object, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueReadBuffer(commandQueue As CommandQueue, buffer As IMem, blockingRead As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As Object, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueReadBuffer(commandQueue, buffer, blockingRead, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueReadBuffer(commandQueue As CommandQueue, buffer As IMem, blockingRead As Bool, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueReadBuffer(commandQueue As CommandQueue, buffer As IMem, blockingRead As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueReadBuffer(commandQueue, buffer, blockingRead, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub

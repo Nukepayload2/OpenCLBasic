@@ -13,7 +13,7 @@ Public Class CommandList
     Shared s_intPtrSize As New IntPtr(Marshal.SizeOf(GetType(IntPtr)))
 
     Private _pStack As UInteger = 0
-    Private _maxWidth, _maxHeight As Integer
+    Private _maxWidth, _maxHeight, _maxLength As Integer
     Private _memLocFlags As MemFlags = MemFlags.UseHostPtr
 
     Private ReadOnly _copyBackMem As New Stack(Of IMem)
@@ -101,6 +101,7 @@ Public Class CommandList
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
         _pStack += 1UI
 
+        _maxLength = Math.Max(_maxLength, length)
         _disposeMem.Add(mem)
     End Sub
 
@@ -111,25 +112,34 @@ Public Class CommandList
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
         _pStack += 1UI
 
+        _copyBackMem.Push(mem)
+        _copyBackPtr.Push(ptr)
+
+        _maxLength = Math.Max(_maxLength, length)
         _disposeMem.Add(mem)
     End Sub
 
     ''' <summary>
     ''' 以处理一组数据的方式调用 OpenCL 方法。
     ''' </summary>
-    Public Sub [Call]()
-        Dim regionPtr = {New IntPtr(_maxWidth), New IntPtr(_maxHeight), New IntPtr(1)}
-        Dim workGroupSizePtr = regionPtr
-        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 2, Nothing, workGroupSizePtr, Nothing, 0, Nothing, Nothing)
+    Public Sub [Call](elementSize As Integer)
+        Dim globalWs = {New IntPtr(_maxLength \ elementSize)}
+        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 1, Nothing, globalWs, Nothing, 0, Nothing, Nothing)
         Finish(_cmdQueue)
+
+        If UseGpuMemory Then
+            Do While _copyBackMem.Count > 0
+                EnqueueReadBuffer(_cmdQueue, _copyBackMem.Pop, True, Nothing, New IntPtr(_maxLength),
+                                  _copyBackPtr.Pop, 0, Nothing, Nothing)
+            Loop
+        End If
 
         For i = 0 To _disposeMem.Count - 1
             ReleaseMemObject(_disposeMem(i))
         Next
         _disposeMem.Clear()
 
-        _maxHeight = 0
-        _maxWidth = 0
+        _maxLength = 0
     End Sub
 
     ''' <summary>

@@ -571,7 +571,7 @@ namespace OpenCL.Net
         [DllImport(Library)]
         private static extern ErrorCode clEnqueueReadBuffer(IntPtr commandQueue,
                                                             IntPtr buffer,
-                                                            Bool blockingRead,
+                                                            [MarshalAs(UnmanagedType.Bool)]bool blockingRead,
                                                             IntPtr offsetInBytes,
                                                             IntPtr lengthInBytes,
                                                             IntPtr ptr,
@@ -580,7 +580,7 @@ namespace OpenCL.Net
                                                             [Out] [MarshalAs(UnmanagedType.Struct)] out ClEvent e);
         public static ErrorCode EnqueueReadBuffer(CommandQueue commandQueue,
                                                   IMem buffer,
-                                                  Bool blockingRead,
+                                                  bool blockingRead,
                                                   IntPtr offsetInBytes,
                                                   IntPtr lengthInBytes,
                                                   object data,
@@ -594,7 +594,7 @@ namespace OpenCL.Net
         }
         public static ErrorCode EnqueueReadBuffer(CommandQueue commandQueue,
                                                   IMem buffer,
-                                                  Bool blockingRead,
+                                                  bool blockingRead,
                                                   IntPtr offsetInBytes,
                                                   IntPtr lengthInBytes,
                                                   IntPtr data,
@@ -609,7 +609,7 @@ namespace OpenCL.Net
         [DllImport(Library)]
         private static extern ErrorCode clEnqueueWriteBuffer(IntPtr commandQueue,
                                                              IntPtr buffer,
-                                                             Bool blockingWrite,
+                                                             [MarshalAs(UnmanagedType.Bool)]bool blockingWrite,
                                                              IntPtr offsetInBytes,
                                                              IntPtr lengthInBytes,
                                                              IntPtr ptr,
@@ -618,7 +618,7 @@ namespace OpenCL.Net
                                                              [Out] [MarshalAs(UnmanagedType.Struct)] out ClEvent e);
         public static ErrorCode EnqueueWriteBuffer(CommandQueue commandQueue,
                                                    IMem buffer,
-                                                   Bool blockingWrite,
+                                                   bool blockingWrite,
                                                    IntPtr offsetInBytes,
                                                    IntPtr lengthInBytes,
                                                    object data,
@@ -631,7 +631,7 @@ namespace OpenCL.Net
         }
         public static ErrorCode EnqueueWriteBuffer(CommandQueue commandQueue,
                                                    IMem buffer,
-                                                   Bool blockingWrite,
+                                                   bool blockingWrite,
                                                    IntPtr offsetInBytes,
                                                    IntPtr lengthInBytes,
                                                    IntPtr data,
@@ -798,7 +798,7 @@ namespace OpenCL.Net
         [DllImport(Library)]
         private static extern IntPtr clEnqueueMapBuffer(IntPtr commandQueue,
                                                         IntPtr buffer,
-                                                        Bool blockingMap,
+                                                        [MarshalAs(UnmanagedType.Bool)]bool blockingMap,
                                                         MapFlags mapFlags,
                                                         IntPtr offset,
                                                         IntPtr cb,
@@ -808,7 +808,7 @@ namespace OpenCL.Net
                                                         out ErrorCode errCodeRet);
         public static InfoBuffer EnqueueMapBuffer(CommandQueue commandQueue,
                                                   IMem buffer,
-                                                  Bool blockingMap,
+                                                  bool blockingMap,
                                                   MapFlags mapFlags,
                                                   IntPtr offset,
                                                   IntPtr cb,
@@ -824,7 +824,7 @@ namespace OpenCL.Net
         [DllImport(Library)]
         private static extern IntPtr clEnqueueMapImage(IntPtr commandQueue,
                                                        IntPtr image,
-                                                       Bool blockingMap,
+                                                       [MarshalAs(UnmanagedType.Bool)]bool blockingMap,
                                                        MapFlags mapFlags,
                                                        [In] [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] IntPtr[] origin,
                                                        [In] [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] IntPtr[] region,
@@ -836,7 +836,7 @@ namespace OpenCL.Net
                                                        out ErrorCode errCodeRet);
         public static InfoBuffer EnqueueMapImage(CommandQueue commandQueue,
                                                  IMem image,
-                                                 Bool blockingMap,
+                                                 bool blockingMap,
                                                  MapFlags mapFlags,
                                                  IntPtr[] origin,
                                                  IntPtr[] region,

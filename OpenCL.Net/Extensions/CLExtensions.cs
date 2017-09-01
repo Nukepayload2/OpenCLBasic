@@ -89,21 +89,6 @@ namespace OpenCL.Net.Extensions
         {
             return kernel.Compile(kernel.KernelSource, kernel.KernelName, options);
         }
-        //public static ErrorCode CompileForDebugOnIntelCPU(this KernelWrapperBase kernel, out string errors)
-        //{
-        //    #warning Compiling kernel for debugging
-        //    Console.WriteLine("Compiling {0} for debugging", kernel.KernelName);
-
-        //    return kernel.Compile(kernel.KernelSource, kernel.KernelName, out errors, string.Format("-cl-opt-disable -g -s \"{0}\"", kernel.OriginalKernelPath));
-        //}
-        //public static ErrorCode CompileForDebugOnIntelCPU(this KernelWrapperBase kernel)
-        //{
-        //    #warning Compiling kernel for debugging
-        //    Console.WriteLine("Compiling {0} for debugging", kernel.KernelName);
-
-        //    return kernel.Compile(kernel.KernelSource, kernel.KernelName, string.Format("-cl-opt-disable -g -s \"{0}\"", kernel.OriginalKernelPath));
-        //}
-
         public struct KernelArgChain
         {
             internal Kernel Kernel;
@@ -146,10 +131,10 @@ namespace OpenCL.Net.Extensions
             return argChain;
         }
 
-        public static ClEvent EnqueueKernel(this CommandQueue commandQueue, Kernel kernel, 
-            uint globalWorkSize, 
-            uint localWorkSize = 0, 
-            params ClEvent[] waitFor)
+        public static ClEvent EnqueueKernel(this CommandQueue commandQueue, Kernel kernel,
+            uint globalWorkSize,
+            ClEvent[] waitFor,
+            uint localWorkSize = 0)
         {
             ClEvent e;
             Cl.EnqueueNDRangeKernel(commandQueue, kernel, 1, null,
@@ -159,9 +144,9 @@ namespace OpenCL.Net.Extensions
             return e;
         }
         public static ClEvent EnqueueKernel(this CommandQueue commandQueue, Kernel kernel, 
-            uint globalWorkSize0, uint globalWorkSize1, 
-            uint localWorkSize0 = 0, uint localWorkSize1 = 0, 
-            params ClEvent[] waitFor)
+            uint globalWorkSize0, uint globalWorkSize1,
+            ClEvent[] waitFor , 
+            uint localWorkSize0 = 0, uint localWorkSize1 = 0)
         {
             ClEvent e;
             Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null,
@@ -174,8 +159,8 @@ namespace OpenCL.Net.Extensions
         }
         public static ClEvent EnqueueKernel(this CommandQueue commandQueue, Kernel kernel,
             uint globalWorkSize0, uint globalWorkSize1, uint globalWorkSize2,
-            uint localWorkSize0 = 0, uint localWorkSize1 = 0, uint localWorkSize2 = 0,
-            params ClEvent[] waitFor)
+            ClEvent[] waitFor, uint localWorkSize0 = 0, uint localWorkSize1 = 0,
+            uint localWorkSize2 = 0)
         {
             ClEvent e;
             Cl.EnqueueNDRangeKernel(commandQueue, kernel, 1, null,
@@ -187,72 +172,72 @@ namespace OpenCL.Net.Extensions
             return e;
         }
 
-        public static void EnqueueWaitForEvents(this CommandQueue commandQueue, params ClEvent[] waitFor)
+        public static void EnqueueWaitForEvents(this CommandQueue commandQueue, ClEvent[] waitFor)
         {
             Cl.EnqueueWaitForEvents(commandQueue, (uint)waitFor.Length, waitFor);
         }
-        public static ClEvent EnqueueWriteToBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] data, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static ClEvent EnqueueWriteToBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] data, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T : struct
         {
             ClEvent e;
             var elemSize = TypeSize<T>.SizeInt;
-            Cl.EnqueueWriteBuffer(commandQueue, buffer, Bool.False, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? data.Length : length) * elemSize), data, 
+            Cl.EnqueueWriteBuffer(commandQueue, buffer, false, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? data.Length : length) * elemSize), data, 
                 (uint)waitFor.Length, waitFor.Length == 0 ? null : waitFor, out e)
                 .Check();
             return e;
         }
-        public static ClEvent EnqueueWriteToBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] data, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static ClEvent EnqueueWriteToBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] data, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T : struct
         {
-            return EnqueueWriteToBuffer(commandQueue, (IMem)buffer, data, offset, length, waitFor);
+            return EnqueueWriteToBuffer(commandQueue, (IMem)buffer, data, waitFor, offset, length);
         }
-        public static void WriteToBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] data, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static void WriteToBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] data, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T: struct
         {
             ClEvent e;
             var elemSize = TypeSize<T>.SizeInt;
-            Cl.EnqueueWriteBuffer(commandQueue, buffer, Bool.True, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? data.Length : length) * elemSize), data,
+            Cl.EnqueueWriteBuffer(commandQueue, buffer, true, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? data.Length : length) * elemSize), data,
                 (uint)waitFor.Length, waitFor.Length == 0 ? null : waitFor, out e)
                 .Check();
             e.Dispose();
         }
-        public static void WriteToBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] data, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static void WriteToBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] data, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T : struct
         {
-            WriteToBuffer(commandQueue, (IMem) buffer, data, offset, length, waitFor);
+            WriteToBuffer(commandQueue, (IMem)buffer, data, waitFor, offset, length);
         }
 
-        public static ClEvent EnqueueReadFromBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] array, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static ClEvent EnqueueReadFromBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] array, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T : struct
         {
             ClEvent e;
             var elemSize = TypeSize<T>.SizeInt;
-            Cl.EnqueueReadBuffer(commandQueue, buffer, Bool.False, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? array.Length : length) * elemSize), array,
+            Cl.EnqueueReadBuffer(commandQueue, buffer, false, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? array.Length : length) * elemSize), array,
                 (uint)waitFor.Length, waitFor.Length == 0 ? null : waitFor, out e)
                 .Check();
 
             return e;
         }
-        public static ClEvent EnqueueReadFromBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] array, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static ClEvent EnqueueReadFromBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] array, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T : struct
         {
-            return EnqueueReadFromBuffer(commandQueue, (IMem) buffer, array, offset, length, waitFor);
+            return EnqueueReadFromBuffer(commandQueue, (IMem)buffer, array, waitFor, offset, length);
         }
-        public static void ReadFromBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] array, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static void ReadFromBuffer<T>(this CommandQueue commandQueue, IMem buffer, T[] array, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T : struct
         {
             ClEvent e;
             var elemSize = TypeSize<T>.SizeInt;
-            Cl.EnqueueReadBuffer(commandQueue, buffer, Bool.True, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? array.Length : length) * elemSize), array,
+            Cl.EnqueueReadBuffer(commandQueue, buffer, true, (IntPtr)(offset * elemSize), (IntPtr)((length == -1 ? array.Length : length) * elemSize), array,
                 (uint)waitFor.Length, waitFor.Length == 0 ? null : waitFor, out e)
                 .Check();
 
             e.Dispose();
         }
-        public static void ReadFromBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] array, int offset = 0, long length = -1, params ClEvent[] waitFor)
+        public static void ReadFromBuffer<T>(this CommandQueue commandQueue, IMem<T> buffer, T[] array, ClEvent[] waitFor, int offset = 0, long length = -1)
             where T : struct
         {
-            ReadFromBuffer(commandQueue, (IMem)buffer, array, offset, length, waitFor);
+            ReadFromBuffer(commandQueue, (IMem)buffer, array, waitFor, offset, length);
         }
 
         public static ErrorCode Flush(this CommandQueue commandQueue)

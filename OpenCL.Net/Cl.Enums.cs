@@ -343,9 +343,9 @@ namespace OpenCL.Net
         InvalidMipLevel = -62,
     };
 
-    public enum Bool : uint // cl_uint
-    {
-        False = 0,
-        True = 1
-    };
+    //public enum Bool : uint // cl_uint
+    //{
+    //    False = 0,
+    //    True = 1
+    //};
 }

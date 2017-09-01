@@ -211,7 +211,7 @@ namespace OpenCL.Net
 
         public static ErrorCode EnqueueReadBuffer<T>(CommandQueue commandQueue,
                                                   IMem buffer,
-                                                  Bool blockingRead,
+                                                  bool blockingRead,
                                                   int offset,
                                                   int length,
                                                   T[] data,
@@ -225,7 +225,7 @@ namespace OpenCL.Net
 
         public static ErrorCode EnqueueReadBuffer<T>(CommandQueue commandQueue,
                                                   IMem<T> buffer,
-                                                  Bool blockingRead,
+                                                  bool blockingRead,
                                                   int offset,
                                                   int length,
                                                   T[] data,
@@ -239,7 +239,7 @@ namespace OpenCL.Net
 
         public static ErrorCode EnqueueReadBuffer<T>(CommandQueue commandQueue,
                                                   IMem<T> buffer,
-                                                  Bool blockingRead,
+                                                  bool blockingRead,
                                                   T[] data,
                                                   int numEventsInWaitList,
                                                   ClEvent[] eventWaitList,
@@ -250,7 +250,7 @@ namespace OpenCL.Net
 
         public static ErrorCode EnqueueWriteBuffer<T>(CommandQueue commandQueue,
                                                    IMem<T> buffer,
-                                                   Bool blockingWrite,
+                                                   bool blockingWrite,
                                                    int offset,
                                                    int length,
                                                    T[] data,
@@ -264,7 +264,7 @@ namespace OpenCL.Net
 
         public static ErrorCode EnqueueWriteBuffer<T>(CommandQueue commandQueue,
                                                    IMem<T> buffer,
-                                                   Bool blockingWrite,
+                                                   bool blockingWrite,
                                                    T[] data,
                                                    int numEventsInWaitList,
                                                    ClEvent[] eventWaitList,

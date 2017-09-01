@@ -417,7 +417,7 @@ namespace OpenCL.Net
                 var commandQueue = Cl.CreateCommandQueue(context, devices.First(), CommandQueueProperties.None, out err);
 
                 ClEvent ev;
-                Cl.EnqueueReadBuffer(commandQueue, _mem, Bool.True, result, 0, null, out ev).Check();
+                Cl.EnqueueReadBuffer(commandQueue, _mem, true, result, 0, null, out ev).Check();
                 ev.Dispose();
 
                 return result;
@@ -832,7 +832,7 @@ namespace OpenCL.Net
             }
         }
 
-        public InfoBufferArray(params InfoBuffer[] buffers)
+        public InfoBufferArray(InfoBuffer[] buffers)
         {
             _buffers = new IntPtr[buffers.Length];
             for (int i = 0; i < buffers.Length; i++)
