@@ -22,7 +22,7 @@ Public Class OpenCLDevice
             Try
                 Dim deviceIds = GetDeviceIDs(platform, DeviceType.Gpu)
                 For Each dev In From d In deviceIds
-                                Where GetDeviceInfo(d, DeviceInfo.ImageSupport).CastTo(Of Bool) = Bool.True
+                                Where GetDeviceInfo(d, DeviceInfo.ImageSupport).CastTo(Of Integer) = 1
                     Console.Write(New StreamReader(GetDeviceInfo(dev, DeviceInfo.Vendor).AsStream).ReadToEnd)
                     Console.Write(" - ")
                     Console.WriteLine(New StreamReader(GetDeviceInfo(dev, DeviceInfo.Name).AsStream).ReadToEnd)

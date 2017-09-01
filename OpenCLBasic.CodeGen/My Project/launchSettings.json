@@ -2,7 +2,7 @@
   "profiles": {
     "OpenCLBasic.CodeGen": {
       "commandName": "Project",
-      "commandLineArgs": "G:\\vs2017\\OpenCLBasic\\OpenCLBasic"
+      "commandLineArgs": "..\\OpenCLBasic"
     }
   }
 }

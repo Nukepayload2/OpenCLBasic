@@ -14,7 +14,6 @@ Public Class CommandList
 
     Private _pStack As UInteger = 0
     Private _maxWidth, _maxHeight, _maxLength As Integer
-    Private _memLocFlags As MemFlags = MemFlags.UseHostPtr
 
     Private ReadOnly _copyBackMem As New Stack(Of IMem)
     Private ReadOnly _disposeMem As New List(Of IMem)
@@ -36,22 +35,10 @@ Public Class CommandList
     End Property
 
     ''' <summary>
-    ''' 表示是否使用显存。默认是不使用。需要在显卡进行复杂计算的时候建议将此选项设置为 True。
-    ''' </summary>
-    Public Property UseGpuMemory As Boolean
-        Get
-            Return _memLocFlags = MemFlags.CopyHostPtr
-        End Get
-        Set(value As Boolean)
-            _memLocFlags = If(value, MemFlags.CopyHostPtr, MemFlags.UseHostPtr)
-        End Set
-    End Property
-
-    ''' <summary>
     ''' 将用于输入的位图的参数加入参数栈中, 并将图片写入的命令加入命令队列。
     ''' </summary>
     Public Sub LoadInputImage2D(imageSize As Rectangle, backBuffer As IntPtr)
-        Dim mem = CreateImage2D(_method.DeviceContext, _memLocFlags Or MemFlags.ReadOnly,
+        Dim mem = CreateImage2D(_method.DeviceContext, MemFlags.ReadOnly,
                   clImageFormat, New IntPtr(imageSize.Width),
                   New IntPtr(imageSize.Height), IntPtr.Zero,
                   backBuffer)
@@ -77,7 +64,7 @@ Public Class CommandList
     ''' 将用于输出的位图的参数加入参数栈中。
     ''' </summary>
     Public Sub LoadOutputImage2D(imageSize As Rectangle, backBuffer As IntPtr)
-        Dim mem = CreateImage2D(_method.DeviceContext, _memLocFlags Or MemFlags.WriteOnly,
+        Dim mem = CreateImage2D(_method.DeviceContext, MemFlags.WriteOnly,
                   clImageFormat, New IntPtr(imageSize.Width),
                   New IntPtr(imageSize.Height), IntPtr.Zero,
                   backBuffer)
@@ -95,18 +82,20 @@ Public Class CommandList
     End Sub
 
     Public Sub LoadInput(ptr As IntPtr, length As Integer)
-        Dim mem = CreateBuffer(_method.DeviceContext, _memLocFlags Or MemFlags.ReadOnly,
+        Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.ReadOnly,
                                New IntPtr(length), ptr)
 
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
         _pStack += 1UI
+
+        EnqueueWriteBuffer(_cmdQueue, mem, True, IntPtr.Zero, New IntPtr(length), ptr, 0, Nothing, Nothing)
 
         _maxLength = Math.Max(_maxLength, length)
         _disposeMem.Add(mem)
     End Sub
 
     Public Sub LoadOutput(ptr As IntPtr, length As Integer)
-        Dim mem = CreateBuffer(_method.DeviceContext, _memLocFlags Or MemFlags.WriteOnly,
+        Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.WriteOnly,
                                New IntPtr(length), ptr)
 
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
@@ -127,12 +116,10 @@ Public Class CommandList
         EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 1, Nothing, globalWs, Nothing, 0, Nothing, Nothing)
         Finish(_cmdQueue)
 
-        If UseGpuMemory Then
-            Do While _copyBackMem.Count > 0
-                EnqueueReadBuffer(_cmdQueue, _copyBackMem.Pop, True, Nothing, New IntPtr(_maxLength),
-                                  _copyBackPtr.Pop, 0, Nothing, Nothing)
-            Loop
-        End If
+        Do While _copyBackMem.Count > 0
+            EnqueueReadBuffer(_cmdQueue, _copyBackMem.Pop, True, Nothing, New IntPtr(_maxLength),
+                              _copyBackPtr.Pop, 0, Nothing, Nothing)
+        Loop
 
         For i = 0 To _disposeMem.Count - 1
             ReleaseMemObject(_disposeMem(i))
@@ -140,6 +127,7 @@ Public Class CommandList
         _disposeMem.Clear()
 
         _maxLength = 0
+        _pStack = 0
     End Sub
 
     ''' <summary>
@@ -164,6 +152,7 @@ Public Class CommandList
 
         _maxHeight = 0
         _maxWidth = 0
+        _pStack = 0
     End Sub
 
 #Region "IDisposable Support"

@@ -192,12 +192,12 @@ Partial Public Module ClMethods
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueWriteBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingWrite As Bool, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueWriteBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingWrite As Boolean, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueWriteBuffer(Of T)(commandQueue, buffer, blockingWrite, offset, length, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueWriteBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingWrite As Bool, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueWriteBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingWrite As Boolean, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueWriteBuffer(Of T)(commandQueue, buffer, blockingWrite, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
@@ -230,12 +230,12 @@ Partial Public Module ClMethods
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueWriteBuffer(commandQueue As CommandQueue, buffer As IMem, blockingWrite As Bool, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As Object, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueWriteBuffer(commandQueue As CommandQueue, buffer As IMem, blockingWrite As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As Object, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueWriteBuffer(commandQueue As CommandQueue, buffer As IMem, blockingWrite As Bool, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
+    Public Sub EnqueueWriteBuffer(commandQueue As CommandQueue, buffer As IMem, blockingWrite As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
         errCode = Cl.EnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
         CheckErr(errCode)
     End Sub
@@ -270,13 +270,13 @@ Partial Public Module ClMethods
         CheckErr(errCode)
     End Sub
 
-    Public Function EnqueueMapBuffer(commandQueue As CommandQueue, buffer As IMem, blockingMap As Bool, mapFlags As MapFlags, offset As IntPtr, cb As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent) As InfoBuffer
+    Public Function EnqueueMapBuffer(commandQueue As CommandQueue, buffer As IMem, blockingMap As Boolean, mapFlags As MapFlags, offset As IntPtr, cb As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent) As InfoBuffer
         Dim value = Cl.EnqueueMapBuffer(commandQueue, buffer, blockingMap, mapFlags, offset, cb, numEventsInWaitList, eventWaitList, e, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function EnqueueMapImage(commandQueue As CommandQueue, image As IMem, blockingMap As Bool, mapFlags As MapFlags, origin As IntPtr(), region As IntPtr(), imageRowPitch As IntPtr, imageSlicePitch As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent) As InfoBuffer
+    Public Function EnqueueMapImage(commandQueue As CommandQueue, image As IMem, blockingMap As Boolean, mapFlags As MapFlags, origin As IntPtr(), region As IntPtr(), imageRowPitch As IntPtr, imageSlicePitch As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent) As InfoBuffer
         Dim value = Cl.EnqueueMapImage(commandQueue, image, blockingMap, mapFlags, origin, region, imageRowPitch, imageSlicePitch, numEventsInWaitList, eventWaitList, e, errCode)
         CheckErr(errCode)
         Return value
