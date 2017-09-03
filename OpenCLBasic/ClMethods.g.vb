@@ -1,557 +1,397 @@
-Imports OpenCL.Net
-
+Option Strict On
+Imports System.Runtime.InteropServices
 ' 这个文件由代码生成。重新执行 CodeGen 会覆盖此文件。
 Partial Public Module ClMethods
-    Public Sub SetKernelArg(kernel As Kernel, argIndex As UInt32, value As IMem)
-        errCode = Cl.SetKernelArg(kernel, argIndex, value)
+    Public Sub ReleaseKernel(kernel As KernelHandle)
+        errCode = clReleaseKernel(kernel)
         CheckErr(errCode)
     End Sub
 
-    Public Sub SetKernelArg(Of T)(kernel As Kernel, argIndex As UInt32, length As Int32)
-        errCode = Cl.SetKernelArg(Of T)(kernel, argIndex, length)
+    Public Sub ReleaseMemObject(memObj As ClBuffer)
+        errCode = clReleaseMemObject(memObj)
         CheckErr(errCode)
     End Sub
 
-    Public Function GetEventInfo(e As ClEvent, paramName As EventInfo) As InfoBuffer
-        Dim value = Cl.GetEventInfo(e, paramName, errCode)
+    Public Sub ReleaseProgram(program As ProgramHandle)
+        errCode = clReleaseProgram(program)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub ReleaseSampler(sampler As SamplerHandle)
+        errCode = clReleaseSampler(sampler)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainCommandQueue(commandQueue As CommandQueueHandle)
+        errCode = clRetainCommandQueue(commandQueue)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainContext(context As ContextHandle)
+        errCode = clRetainContext(context)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainEvent(eventHandle As EventHandle)
+        errCode = clRetainEvent(eventHandle)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainKernel(kernel As KernelHandle)
+        errCode = clRetainKernel(kernel)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainMemObject(memObj As IntPtr)
+        errCode = clRetainMemObject(memObj)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainProgram(program As ProgramHandle)
+        errCode = clRetainProgram(program)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainSampler(sampler As SamplerHandle)
+        errCode = clRetainSampler(sampler)
+        CheckErr(errCode)
+    End Sub
+
+    Public Function SetCommandQueueProperty(commandQueue As CommandQueueHandle, properties As CommandQueueProperties, enable As Boolean) As CommandQueueProperties
+        Dim oldProperties As CommandQueueProperties = Nothing
+        Dim errCode = clSetCommandQueueProperty(commandQueue, properties, enable, oldProperties)
+        CheckErr(errCode)
+        Return oldProperties
+    End Function
+
+    Public Sub SetKernelArg(kernel As KernelHandle, argIndex As UInt32, argSize As SizeT, ByRef argValue As ClBuffer)
+        errCode = clSetKernelArg(kernel, argIndex, argSize, argValue)
+        CheckErr(errCode)
+    End Sub
+
+    Public Function UnloadCompiler() As ErrorCode
+        Return clUnloadCompiler()
+    End Function
+
+    Public Sub WaitForEvents(numEvents As UInt32, eventWaitList As EventHandle())
+        errCode = clWaitForEvents(numEvents, eventWaitList)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub EnqueueWaitForEvents(commandQueue As CommandQueueHandle, numEventsInWaitList As UInt32, eventWaitList As EventHandle())
+        errCode = clEnqueueWaitForEvents(commandQueue, numEventsInWaitList, eventWaitList)
+        CheckErr(errCode)
+    End Sub
+
+    Public Function EnqueueWriteBuffer(commandQueue As CommandQueueHandle, buffer As ClBuffer, blockingWrite As Boolean, offsetInBytes As SizeT, lengthInBytes As SizeT, ptr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offsetInBytes, lengthInBytes, ptr, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Function EnqueueWriteImage(commandQueue As CommandQueueHandle, image As ClBuffer, blockingWrite As Boolean, origin As SizeT(), region As SizeT(), rowPitch As SizeT, slicePitch As SizeT, ptr As IntPtr, numEventsIntWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueWriteImage(commandQueue, image, blockingWrite, origin, region, rowPitch, slicePitch, ptr, numEventsIntWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Sub Finish(commandQueue As CommandQueueHandle)
+        errCode = clFinish(commandQueue)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub Flush(commandQueue As CommandQueueHandle)
+        errCode = clFlush(commandQueue)
+        CheckErr(errCode)
+    End Sub
+
+    Public Function GetCommandQueueInfo(commandQueue As CommandQueueHandle, paramKind As CommandQueueInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetCommandQueueInfo(commandQueue, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetContextInfo(context As ContextHandle, paramKind As ContextInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetContextInfo(context, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetDeviceIDs(platform As PlatformHandle, deviceType As DeviceType, numEntries As UInt32, devices As DeviceHandle()) As UInt32
+        Dim numDevices As UInt32 = Nothing
+        Dim errCode = clGetDeviceIDs(platform, deviceType, numEntries, devices, numDevices)
+        CheckErr(errCode)
+        Return numDevices
+    End Function
+
+    Public Function GetDeviceInfo(device As DeviceHandle, paramKind As DeviceInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetDeviceInfo(device, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetEventInfo(eventHandle As EventHandle, paramKind As EventInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetEventInfo(eventHandle, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetEventProfilingInfo(eventHandle As EventHandle, paramKind As ProfilingInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetEventProfilingInfo(eventHandle, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetExtensionFunctionAddress(ByRef funcName As String) As IntPtr
+        Return clGetExtensionFunctionAddress(funcName)
+    End Function
+
+    Public Function GetImageInfo(image As IntPtr, paramType As ImageInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetImageInfo(image, paramType, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetKernelInfo(kernel As KernelHandle, paramKind As KernelInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetKernelInfo(kernel, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetKernelWorkGroupInfo(kernel As KernelHandle, device As DeviceHandle, paramKind As KernelWorkGroupInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetKernelWorkGroupInfo(kernel, device, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetMemObjectInfo(memObj As IntPtr, paramKind As MemInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetMemObjectInfo(memObj, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetPlatformIDs(numEntries As UInt32, platforms As PlatformHandle()) As UInt32
+        Dim numPlatforms As UInt32 = Nothing
+        Dim errCode = clGetPlatformIDs(numEntries, platforms, numPlatforms)
+        CheckErr(errCode)
+        Return numPlatforms
+    End Function
+
+    Public Function GetPlatformInfo(platform As PlatformHandle, paramKind As PlatformInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetPlatformInfo(platform, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetProgramBuildInfo(program As ProgramHandle, device As DeviceHandle, paramKind As ProgramBuildInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetProgramBuildInfo(program, device, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetProgramInfo(program As ProgramHandle, paramKind As ProgramInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetProgramInfo(program, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetSamplerInfo(sampler As SamplerHandle, paramKind As SamplerInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
+        Dim paramValueSizeRet As SizeT = Nothing
+        Dim errCode = clGetSamplerInfo(sampler, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+        CheckErr(errCode)
+        Return paramValueSizeRet
+    End Function
+
+    Public Function GetSupportedImageFormats(context As ContextHandle, flags As MemFlags, imageType As MemObjectType, numEntries As UInt32, imageFormats As ImageFormat()) As UInt32
+        Dim numImageFormats As UInt32 = Nothing
+        Dim errCode = clGetSupportedImageFormats(context, flags, imageType, numEntries, imageFormats, numImageFormats)
+        CheckErr(errCode)
+        Return numImageFormats
+    End Function
+
+    Public Sub ReleaseCommandQueue(commandQueue As CommandQueueHandle)
+        errCode = clReleaseCommandQueue(commandQueue)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub ReleaseContext(context As ContextHandle)
+        errCode = clReleaseContext(context)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub ReleaseEvent(eventHandle As EventHandle)
+        errCode = clReleaseEvent(eventHandle)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub BuildProgram(program As ProgramHandle, numDevices As UInt32, deviceList As DeviceHandle(), ByRef options As String, pfnNotify As ProgramNotify, userData As IntPtr)
+        errCode = clBuildProgram(program, numDevices, deviceList, options, pfnNotify, userData)
+        CheckErr(errCode)
+    End Sub
+
+    Public Function CreateBuffer(context As ContextHandle, flags As MemFlags, size As SizeT, hostPtr As IntPtr) As ClBuffer
+        Dim value = clCreateBuffer(context, flags, size, hostPtr, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function GetSamplerInfo(sampler As Sampler, paramName As SamplerInfo) As InfoBuffer
-        Dim value = Cl.GetSamplerInfo(sampler, paramName, errCode)
+    Public Function CreateCommandQueue(context As ContextHandle, device As DeviceHandle, properties As CommandQueueProperties) As CommandQueueHandle
+        Dim value = clCreateCommandQueue(context, device, properties, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function GetEventProfilingInfo(e As ClEvent, paramName As ProfilingInfo) As InfoBuffer
-        Dim value = Cl.GetEventProfilingInfo(e, paramName, errCode)
+    Public Function CreateContext(properties As ContextProperty(), numDevices As UInt32, devices As DeviceHandle(), pfnNotify As ContextNotify, userData As IntPtr) As ContextHandle
+        Dim value = clCreateContext(properties, numDevices, devices, pfnNotify, userData, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Sub RetainEvent(e As ClEvent)
-        errCode = Cl.RetainEvent(e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseEvent(e As ClEvent)
-        errCode = Cl.ReleaseEvent(e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateSampler(context As Context, normalizedCoords As Boolean, addressingMode As AddressingMode, filterMode As FilterMode) As Sampler
-        Dim value = Cl.CreateSampler(context, normalizedCoords, addressingMode, filterMode, errCode)
+    Public Function CreateContextFromType(properties As ContextProperty(), deviceType As DeviceType, pfnNotify As ContextNotify, userData As IntPtr) As ContextHandle
+        Dim value = clCreateContextFromType(properties, deviceType, pfnNotify, userData, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Sub RetainSampler(sampler As Sampler)
-        errCode = Cl.RetainSampler(sampler)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseSampler(sampler As Sampler)
-        errCode = Cl.ReleaseSampler(sampler)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetSamplerInfo(sampler As Sampler, paramName As SamplerInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetSamplerInfo(sampler, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetEventProfilingInfo(e As ClEvent, paramName As ProfilingInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetEventProfilingInfo(e, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub OnError([error] As ErrorCode, errorCode As ErrorCode, action As Action(Of ErrorCode))
-        errCode = Cl.OnError([error], errorCode, action)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub OnAnyError([error] As ErrorCode, action As Action(Of ErrorCode))
-        errCode = Cl.OnAnyError([error], action)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub Check([error] As ErrorCode)
-        errCode = Cl.Check([error])
-        CheckErr(errCode)
-    End Sub
-
-    Public Function GetPlatformIDs() As Platform()
-        Dim value = Cl.GetPlatformIDs(errCode)
+    Public Function CreateImage2D(context As ContextHandle, flags As MemFlags, ByRef imageFormat As ImageFormat, imageWidth As SizeT, imageHeight As SizeT, imageRowPitch As SizeT, hostPtr As IntPtr) As ClBuffer
+        Dim value = clCreateImage2D(context, flags, imageFormat, imageWidth, imageHeight, imageRowPitch, hostPtr, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function GetPlatformInfo(platform As Platform, paramName As PlatformInfo) As InfoBuffer
-        Dim value = Cl.GetPlatformInfo(platform, paramName, errCode)
+    Public Function CreateImage3D(context As ContextHandle, flags As MemFlags, ByRef imageFormat As ImageFormat, imageWidth As SizeT, imageHeight As SizeT, imageDepth As SizeT, imageRowPitch As SizeT, imageSlicePitch As SizeT, hostPtr As IntPtr) As ClBuffer
+        Dim value = clCreateImage3D(context, flags, imageFormat, imageWidth, imageHeight, imageDepth, imageRowPitch, imageSlicePitch, hostPtr, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function GetDeviceIDs(platform As Platform, deviceType As DeviceType) As Device()
-        Dim value = Cl.GetDeviceIDs(platform, deviceType, errCode)
+    Public Function CreateKernel(program As ProgramHandle, ByRef kernelName As String) As KernelHandle
+        Dim value = clCreateKernel(program, kernelName, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function GetDeviceInfo(device As Device, paramName As DeviceInfo) As InfoBuffer
-        Dim value = Cl.GetDeviceInfo(device, paramName, errCode)
+    Public Function CreateKernelsInProgram(program As ProgramHandle, numKernels As UInt32, kernels As KernelHandle(), <Out> ByRef numKernelsRet As UInt32) As KernelHandle
+        Return clCreateKernelsInProgram(program, numKernels, kernels, numKernelsRet)
+    End Function
+
+    Public Function CreateProgramWithBinary(context As ContextHandle, numDevices As UInt32, deviceList As DeviceHandle(), lengths As IntPtr(), binaries As IntPtr, binaryStatus As IntPtr) As ProgramHandle
+        Dim value = clCreateProgramWithBinary(context, numDevices, deviceList, lengths, binaries, binaryStatus, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function GetContextInfo(context As Context, paramName As ContextInfo) As InfoBuffer
-        Dim value = Cl.GetContextInfo(context, paramName, errCode)
+    Public Function CreateProgramWithSource(context As ContextHandle, count As UInt32, strings As String(), lengths As IntPtr()) As ProgramHandle
+        Dim value = clCreateProgramWithSource(context, count, strings, lengths, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function CreateContext(platformWildCard As String, deviceType As DeviceType) As Context
-        Dim value = Cl.CreateContext(platformWildCard, deviceType, errCode)
+    Public Function CreateSampler(context As ContextHandle, normalizedCoords As Boolean, addressingMode As AddressingMode, filterMode As FilterMode) As SamplerHandle
+        Dim value = clCreateSampler(context, normalizedCoords, addressingMode, filterMode, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function CreateBuffer(context As Context, flags As MemFlags, size As IntPtr) As IMem
-        Dim value = Cl.CreateBuffer(context, flags, size, errCode)
+    Public Sub EnqueueBarrier(commandQueue As CommandQueueHandle)
+        errCode = clEnqueueBarrier(commandQueue)
+        CheckErr(errCode)
+    End Sub
+
+    Public Function EnqueueCopyBuffer(commandQueue As CommandQueueHandle, srcBuffer As ClBuffer, dstBuffer As ClBuffer, srcOffset As SizeT, dstOffset As SizeT, cb As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueCopyBuffer(commandQueue, srcBuffer, dstBuffer, srcOffset, dstOffset, cb, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Function EnqueueCopyBufferToImage(commandQueue As CommandQueueHandle, srcBuffer As ClBuffer, dstImage As IntPtr, srcOffset As SizeT, dstOrigin As SizeT(), region As SizeT(), numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueCopyBufferToImage(commandQueue, srcBuffer, dstImage, srcOffset, dstOrigin, region, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Function EnqueueCopyImage(commandQueue As CommandQueueHandle, srcImage As IntPtr, dstImage As IntPtr, srcOrigin As SizeT(), dstOrigin As SizeT(), region As SizeT(), numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueCopyImage(commandQueue, srcImage, dstImage, srcOrigin, dstOrigin, region, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Function EnqueueCopyImageToBuffer(commandQueue As CommandQueueHandle, srcImage As IntPtr, dstBuffer As ClBuffer, srcOrigin As SizeT(), region As SizeT(), dstOffset As SizeT, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueCopyImageToBuffer(commandQueue, srcImage, dstBuffer, srcOrigin, region, dstOffset, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Function EnqueueMapBuffer(commandQueue As CommandQueueHandle, buffer As ClBuffer, blockingMap As Boolean, mapFlags As MapFlags, offset As IntPtr, cb As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle(), <Out> ByRef evt As EventHandle) As IntPtr
+        Dim value = clEnqueueMapBuffer(commandQueue, buffer, blockingMap, mapFlags, offset, cb, numEventsInWaitList, eventWaitList, evt, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function CreateBuffer(context As Context, flags As MemFlags, size As Int32) As IMem
-        Dim value = Cl.CreateBuffer(context, flags, size, errCode)
+    Public Function EnqueueMapImage(commandQueue As CommandQueueHandle, image As IntPtr, blockingMap As Boolean, mapFlags As MapFlags, origin As SizeT(), region As SizeT(), <Out> ByRef imageRowPitch As SizeT, <Out> ByRef imageSlicePitch As SizeT, numEventsInWaitList As UInt32, eventWaitList As EventHandle(), <Out> ByRef evt As EventHandle) As IntPtr
+        Dim value = clEnqueueMapImage(commandQueue, image, blockingMap, mapFlags, origin, region, imageRowPitch, imageSlicePitch, numEventsInWaitList, eventWaitList, evt, errCode)
         CheckErr(errCode)
         Return value
     End Function
 
-    Public Function CreateBuffer(Of T As Structure)(context As Context, flags As MemFlags, hostData As T()) As IMem(Of T)
-        Dim value = Cl.CreateBuffer(Of T)(context, flags, hostData, errCode)
+    Public Function EnqueueMarker(commandQueue As CommandQueueHandle) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueMarker(commandQueue, evt)
         CheckErr(errCode)
-        Return value
+        Return evt
     End Function
 
-    Public Function CreateBuffer(Of T As Structure)(context As Context, flags As MemFlags, length As Int32) As IMem(Of T)
-        Dim value = Cl.CreateBuffer(Of T)(context, flags, length, errCode)
+    Public Function EnqueueNDRangeKernel(commandQueue As CommandQueueHandle, kernel As KernelHandle, workDim As UInt32, globalWorkOffset As SizeT(), globalWorkSize As SizeT(), localWorkSize As SizeT(), numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueNDRangeKernel(commandQueue, kernel, workDim, globalWorkOffset, globalWorkSize, localWorkSize, numEventsInWaitList, eventWaitList, evt)
         CheckErr(errCode)
-        Return value
+        Return evt
     End Function
 
-    Public Function GetMemObjectInfo(mem As IMem, paramName As MemInfo) As InfoBuffer
-        Dim value = Cl.GetMemObjectInfo(mem, paramName, errCode)
+    Public Function EnqueueReadBuffer(commandQueue As CommandQueueHandle, buffer As ClBuffer, blockingRead As Boolean, offsetInBytes As SizeT, lengthInBytes As SizeT, ptr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueReadBuffer(commandQueue, buffer, blockingRead, offsetInBytes, lengthInBytes, ptr, numEventsInWaitList, eventWaitList, evt)
         CheckErr(errCode)
-        Return value
+        Return evt
     End Function
 
-    Public Function GetImageInfo(image As IMem, paramName As ImageInfo) As InfoBuffer
-        Dim value = Cl.GetImageInfo(image, paramName, errCode)
+    Public Function EnqueueReadImage(commandQueue As CommandQueueHandle, image As ClBuffer, blockingRead As Boolean, origin As SizeT(), region As SizeT(), rowPitch As SizeT, slicePitch As SizeT, ptr As IntPtr, numEventsIntWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueReadImage(commandQueue, image, blockingRead, origin, region, rowPitch, slicePitch, ptr, numEventsIntWaitList, eventWaitList, evt)
         CheckErr(errCode)
-        Return value
+        Return evt
     End Function
 
-    Public Function GetSupportedImageFormats(context As Context, flags As MemFlags, imageType As MemObjectType) As ImageFormat()
-        Dim value = Cl.GetSupportedImageFormats(context, flags, imageType, errCode)
+    Public Function EnqueueTask(commandQueue As CommandQueueHandle, kernel As KernelHandle, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueTask(commandQueue, kernel, numEventsInWaitList, eventWaitList, evt)
         CheckErr(errCode)
-        Return value
+        Return evt
     End Function
 
-    Public Function GetProgramInfo(program As Program, paramName As ProgramInfo) As InfoBuffer
-        Dim value = Cl.GetProgramInfo(program, paramName, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function GetProgramBuildInfo(program As Program, device As Device, paramName As ProgramBuildInfo) As InfoBuffer
-        Dim value = Cl.GetProgramBuildInfo(program, device, paramName, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function GetCommandQueueInfo(commandQueue As CommandQueue, paramName As CommandQueueInfo) As InfoBuffer
-        Dim value = Cl.GetCommandQueueInfo(commandQueue, paramName, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem, blockingRead As Boolean, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueReadBuffer(Of T)(commandQueue, buffer, blockingRead, offset, length, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingRead As Boolean, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueReadBuffer(Of T)(commandQueue, buffer, blockingRead, offset, length, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueReadBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingRead As Boolean, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueReadBuffer(Of T)(commandQueue, buffer, blockingRead, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueWriteBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingWrite As Boolean, offset As Int32, length As Int32, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueWriteBuffer(Of T)(commandQueue, buffer, blockingWrite, offset, length, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueWriteBuffer(Of T As Structure)(commandQueue As CommandQueue, buffer As IMem(Of T), blockingWrite As Boolean, data As T(), numEventsInWaitList As Int32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueWriteBuffer(Of T)(commandQueue, buffer, blockingWrite, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateKernelsInProgram(program As Program) As Kernel()
-        Dim value = Cl.CreateKernelsInProgram(program, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function GetKernelInfo(kernel As Kernel, paramName As KernelInfo) As InfoBuffer
-        Dim value = Cl.GetKernelInfo(kernel, paramName, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function GetKernelWorkGroupInfo(kernel As Kernel, device As Device, paramName As KernelWorkGroupInfo) As InfoBuffer
-        Dim value = Cl.GetKernelWorkGroupInfo(kernel, device, paramName, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub SetKernelArg(Of T As Structure)(kernel As Kernel, argIndex As UInt32, value As T)
-        errCode = Cl.SetKernelArg(Of T)(kernel, argIndex, value)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub SetKernelArg(Of T As Structure)(kernel As Kernel, argIndex As UInt32, value As IMem(Of T))
-        errCode = Cl.SetKernelArg(Of T)(kernel, argIndex, value)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueWriteBuffer(commandQueue As CommandQueue, buffer As IMem, blockingWrite As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As Object, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueWriteBuffer(commandQueue As CommandQueue, buffer As IMem, blockingWrite As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueCopyBuffer(commandQueue As CommandQueue, srcBuffer As IMem, dstBuffer As IMem, srcOffset As IntPtr, dstOffset As IntPtr, cb As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueCopyBuffer(commandQueue, srcBuffer, dstBuffer, srcOffset, dstOffset, cb, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueReadImage(commandQueue As CommandQueue, image As IMem, blockingRead As Boolean, origin As IntPtr(), region As IntPtr(), rowPitch As IntPtr, slicePitch As IntPtr, dataPtr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueReadImage(commandQueue, image, blockingRead, origin, region, rowPitch, slicePitch, dataPtr, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueWriteImage(commandQueue As CommandQueue, image As IMem, blockingWrite As Boolean, origin As IntPtr(), region As IntPtr(), rowPitch As IntPtr, slicePitch As IntPtr, dataPtr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueWriteImage(commandQueue, image, blockingWrite, origin, region, rowPitch, slicePitch, dataPtr, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueCopyImage(commandQueue As CommandQueue, srcImage As IMem, dstImage As IMem, srcOrigin As IntPtr(), dstOrigin As IntPtr(), region As IntPtr(), numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueCopyImage(commandQueue, srcImage, dstImage, srcOrigin, dstOrigin, region, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueCopyImageToBuffer(commandQueue As CommandQueue, srcImage As IMem, dstBuffer As IMem, srcOrigin As IntPtr(), region As IntPtr(), dstOffset As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueCopyImageToBuffer(commandQueue, srcImage, dstBuffer, srcOrigin, region, dstOffset, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueCopyBufferToImage(commandQueue As CommandQueue, srcBuffer As IMem, dstImage As IMem, srcOffset As IntPtr, dstOrigin As IntPtr(), region As IntPtr(), numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueCopyBufferToImage(commandQueue, srcBuffer, dstImage, srcOffset, dstOrigin, region, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function EnqueueMapBuffer(commandQueue As CommandQueue, buffer As IMem, blockingMap As Boolean, mapFlags As MapFlags, offset As IntPtr, cb As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent) As InfoBuffer
-        Dim value = Cl.EnqueueMapBuffer(commandQueue, buffer, blockingMap, mapFlags, offset, cb, numEventsInWaitList, eventWaitList, e, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function EnqueueMapImage(commandQueue As CommandQueue, image As IMem, blockingMap As Boolean, mapFlags As MapFlags, origin As IntPtr(), region As IntPtr(), imageRowPitch As IntPtr, imageSlicePitch As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent) As InfoBuffer
-        Dim value = Cl.EnqueueMapImage(commandQueue, image, blockingMap, mapFlags, origin, region, imageRowPitch, imageSlicePitch, numEventsInWaitList, eventWaitList, e, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub EnqueueUnmapObject(commandQueue As CommandQueue, memObj As IMem, mappedObject As InfoBuffer, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueUnmapObject(commandQueue, memObj, mappedObject, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueNDRangeKernel(commandQueue As CommandQueue, kernel As Kernel, workDim As UInt32, globalWorkOffset As IntPtr(), globalWorkSize As IntPtr(), localWorkSize As IntPtr(), numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueNDRangeKernel(commandQueue, kernel, workDim, globalWorkOffset, globalWorkSize, localWorkSize, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueTask(commandQueue As CommandQueue, kernel As Kernel, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueTask(commandQueue, kernel, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueMarker(commandQueue As CommandQueue, e As ClEvent)
-        errCode = Cl.EnqueueMarker(commandQueue, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueWaitForEvents(commandQueue As CommandQueue, numEventsInWaitList As UInt32, eventWaitList As ClEvent())
-        errCode = Cl.EnqueueWaitForEvents(commandQueue, numEventsInWaitList, eventWaitList)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueBarrier(commandQueue As CommandQueue)
-        errCode = Cl.EnqueueBarrier(commandQueue)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub Flush(commandQueue As CommandQueue)
-        errCode = Cl.Flush(commandQueue)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub Finish(commandQueue As CommandQueue)
-        errCode = Cl.Finish(commandQueue)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub WaitForEvents(numEvents As UInt32, eventWaitList As ClEvent())
-        errCode = Cl.WaitForEvents(numEvents, eventWaitList)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetEventInfo(e As ClEvent, paramName As EventInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetEventInfo(e, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateProgramWithBinary(context As Context, numDevices As UInt32, deviceList As Device(), lengths As IntPtr(), binaries As InfoBufferArray, binariesStatus As InfoBufferArray(Of ErrorCode)) As Program
-        Dim value = Cl.CreateProgramWithBinary(context, numDevices, deviceList, lengths, binaries, binariesStatus, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub RetainProgram(program As Program)
-        errCode = Cl.RetainProgram(program)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseProgram(program As Program)
-        errCode = Cl.ReleaseProgram(program)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub BuildProgram(program As Program, numDevices As UInt32, deviceList As Device(), options As String, pfnNotify As Cl.ProgramNotify, userData As IntPtr)
-        errCode = Cl.BuildProgram(program, numDevices, deviceList, options, pfnNotify, userData)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetProgramInfo(program As Program, paramName As ProgramInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetProgramInfo(program, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetProgramInfo(program As Program, paramName As ProgramInfo, paramValueSize As IntPtr, paramValues As InfoBufferArray, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetProgramInfo(program, paramName, paramValueSize, paramValues, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetProgramBuildInfo(program As Program, device As Device, paramName As ProgramBuildInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetProgramBuildInfo(program, device, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateKernel(program As Program, kernelName As String) As Kernel
-        Dim value = Cl.CreateKernel(program, kernelName, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub CreateKernelsInProgram(program As Program, numKernels As UInt32, kernels As Kernel(), numKernelsRet As UInt32)
-        errCode = Cl.CreateKernelsInProgram(program, numKernels, kernels, numKernelsRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub RetainKernel(kernel As Kernel)
-        errCode = Cl.RetainKernel(kernel)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseKernel(kernel As Kernel)
-        errCode = Cl.ReleaseKernel(kernel)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub SetKernelArg(kernel As Kernel, argIndex As UInt32, argSize As IntPtr, argValue As Object)
-        errCode = Cl.SetKernelArg(kernel, argIndex, argSize, argValue)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetKernelInfo(kernel As Kernel, paramName As KernelInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetKernelInfo(kernel, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetKernelWorkGroupInfo(kernel As Kernel, device As Device, paramName As KernelWorkGroupInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetKernelWorkGroupInfo(kernel, device, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateCommandQueue(context As Context, device As Device, properties As CommandQueueProperties) As CommandQueue
-        Dim value = Cl.CreateCommandQueue(context, device, properties, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub RetainCommandQueue(commandQueue As CommandQueue)
-        errCode = Cl.RetainCommandQueue(commandQueue)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseCommandQueue(commandQueue As CommandQueue)
-        errCode = Cl.ReleaseCommandQueue(commandQueue)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetCommandQueueInfo(commandQueue As CommandQueue, paramName As CommandQueueInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetCommandQueueInfo(commandQueue, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub SetCommandQueueProperty(commandQueue As CommandQueue, properties As CommandQueueProperties, enable As Boolean, oldProperties As CommandQueueProperties)
-        errCode = Cl.SetCommandQueueProperty(commandQueue, properties, enable, oldProperties)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueReadBuffer(commandQueue As CommandQueue, buffer As IMem, blockingRead As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As Object, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueReadBuffer(commandQueue, buffer, blockingRead, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub EnqueueReadBuffer(commandQueue As CommandQueue, buffer As IMem, blockingRead As Boolean, offsetInBytes As IntPtr, lengthInBytes As IntPtr, data As IntPtr, numEventsInWaitList As UInt32, eventWaitList As ClEvent(), e As ClEvent)
-        errCode = Cl.EnqueueReadBuffer(commandQueue, buffer, blockingRead, offsetInBytes, lengthInBytes, data, numEventsInWaitList, eventWaitList, e)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetPlatformIDs(numEntries As UInt32, platforms As Platform(), numPlatforms As UInt32)
-        errCode = Cl.GetPlatformIDs(numEntries, platforms, numPlatforms)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetPlatformInfo(platformId As Platform, paramName As PlatformInfo, paramValueBufferSize As IntPtr, paramValue As InfoBuffer, paramValueSize As IntPtr)
-        errCode = Cl.GetPlatformInfo(platformId, paramName, paramValueBufferSize, paramValue, paramValueSize)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetDeviceIDs(platform As Platform, deviceType As DeviceType, numEntries As UInt32, devices As Device(), numDevices As UInt32)
-        errCode = Cl.GetDeviceIDs(platform, deviceType, numEntries, devices, numDevices)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetDeviceInfo(device As Device, paramName As DeviceInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetDeviceInfo(device, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateContext(properties As ContextProperty(), numDevices As UInt32, devices As Device(), pfnNotify As Cl.ContextNotify, userData As IntPtr) As Context
-        Dim value = Cl.CreateContext(properties, numDevices, devices, pfnNotify, userData, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function CreateContextFromType(properties As ContextProperty(), deviceType As DeviceType, pfnNotify As Cl.ContextNotify, userData As IntPtr) As Context
-        Dim value = Cl.CreateContextFromType(properties, deviceType, pfnNotify, userData, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub RetainContext(context As Context)
-        errCode = Cl.RetainContext(context)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseContext(context As Context)
-        errCode = Cl.ReleaseContext(context)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetContextInfo(context As Context, paramName As ContextInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetContextInfo(context, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateBuffer(context As Context, flags As MemFlags, size As IntPtr, hostPtr As IntPtr) As IMem
-        Dim value = Cl.CreateBuffer(context, flags, size, hostPtr, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function CreateBuffer(context As Context, flags As MemFlags, size As IntPtr, hostData As Object) As IMem
-        Dim value = Cl.CreateBuffer(context, flags, size, hostData, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub RetainMemObject(memObj As IMem)
-        errCode = Cl.RetainMemObject(memObj)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseMemObject(memObj As IMem)
-        errCode = Cl.ReleaseMemObject(memObj)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetSupportedImageFormats(context As Context, flags As MemFlags, imageType As MemObjectType, numEntries As UInt32, imageFormats As ImageFormat(), numImageFormats As UInt32)
-        errCode = Cl.GetSupportedImageFormats(context, flags, imageType, numEntries, imageFormats, numImageFormats)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateImage2D(context As Context, flags As MemFlags, imageFormat As ImageFormat, imageWidth As IntPtr, imageHeight As IntPtr, imageRowPitch As IntPtr, hostData As Object) As IMem
-        Dim value = Cl.CreateImage2D(context, flags, imageFormat, imageWidth, imageHeight, imageRowPitch, hostData, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function CreateImage2D(context As Context, flags As MemFlags, imageFormat As ImageFormat, imageWidth As IntPtr, imageHeight As IntPtr, imageRowPitch As IntPtr, hostPtr As IntPtr) As IMem
-        Dim value = Cl.CreateImage2D(context, flags, imageFormat, imageWidth, imageHeight, imageRowPitch, hostPtr, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function CreateImage3D(context As Context, flags As MemFlags, imageFormat As ImageFormat, imageWidth As IntPtr, imageHeight As IntPtr, imageDepth As IntPtr, imageRowPitch As IntPtr, imageSlicePitch As IntPtr, hostData As Object) As IMem
-        Dim value = Cl.CreateImage3D(context, flags, imageFormat, imageWidth, imageHeight, imageDepth, imageRowPitch, imageSlicePitch, hostData, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Function CreateImage3D(context As Context, flags As MemFlags, imageFormat As ImageFormat, imageWidth As IntPtr, imageHeight As IntPtr, imageDepth As IntPtr, imageRowPitch As IntPtr, imageSlicePitch As IntPtr, hostPtr As IntPtr) As IMem
-        Dim value = Cl.CreateImage3D(context, flags, imageFormat, imageWidth, imageHeight, imageDepth, imageRowPitch, imageSlicePitch, hostPtr, errCode)
-        CheckErr(errCode)
-        Return value
-    End Function
-
-    Public Sub GetMemObjectInfo(memObj As IMem, paramName As MemInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetMemObjectInfo(memObj, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub GetImageInfo(image As IMem, paramName As ImageInfo, paramValueSize As IntPtr, paramValue As InfoBuffer, paramValueSizeRet As IntPtr)
-        errCode = Cl.GetImageInfo(image, paramName, paramValueSize, paramValue, paramValueSizeRet)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function CreateProgramWithSource(context As Context, count As UInt32, strings As String(), lengths As IntPtr()) As Program
-        Dim value = Cl.CreateProgramWithSource(context, count, strings, lengths, errCode)
-        CheckErr(errCode)
-        Return value
+    Public Function EnqueueUnmapMemObject(commandQueue As CommandQueueHandle, memObj As IntPtr, mappedPtr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueUnmapMemObject(commandQueue, memObj, mappedPtr, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
     End Function
 
 End Module

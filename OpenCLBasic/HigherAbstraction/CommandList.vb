@@ -1,6 +1,5 @@
 ﻿Imports System.Drawing
 Imports System.Runtime.InteropServices
-Imports OpenCL.Net
 
 Public Class CommandList
     Implements IOpenCLResourceCreatorWithContext, IDisposable
@@ -10,25 +9,25 @@ Public Class CommandList
         _cmdQueue = CreateCommandQueue(DeviceContext, Device, commandQueueProperties)
     End Sub
 
-    Shared s_intPtrSize As New IntPtr(Marshal.SizeOf(GetType(IntPtr)))
+    Shared s_intPtrSize As SizeT = Marshal.SizeOf(GetType(IntPtr))
 
     Private _pStack As UInteger = 0
     Private _maxWidth, _maxHeight, _maxLength As Integer
 
-    Private ReadOnly _copyBackMem As New Stack(Of IMem)
-    Private ReadOnly _disposeMem As New List(Of IMem)
+    Private ReadOnly _copyBackMem As New Stack(Of ClBuffer)
+    Private ReadOnly _disposeMem As New List(Of ClBuffer)
     Private ReadOnly _copyBackPtr As New Stack(Of IntPtr)
     Private ReadOnly _method As OpenCLMethod
-    Private ReadOnly _cmdQueue As CommandQueue
+    Private ReadOnly _cmdQueue As CommandQueueHandle
     Private ReadOnly clImageFormat As New ImageFormat(ChannelOrder.RGBA, ChannelType.Unsigned_Int8)
 
-    Public ReadOnly Property Device As Device Implements IOpenCLResourceCreator.Device
+    Public ReadOnly Property Device As DeviceHandle Implements IOpenCLResourceCreator.Device
         Get
             Return _method.Device
         End Get
     End Property
 
-    Public ReadOnly Property DeviceContext As Context Implements IOpenCLResourceCreatorWithContext.DeviceContext
+    Public ReadOnly Property DeviceContext As ContextHandle Implements IOpenCLResourceCreatorWithContext.DeviceContext
         Get
             Return _method.DeviceContext
         End Get
@@ -39,20 +38,20 @@ Public Class CommandList
     ''' </summary>
     Public Sub LoadInputImage2D(imageSize As Rectangle, backBuffer As IntPtr)
         Dim mem = CreateImage2D(_method.DeviceContext, MemFlags.ReadOnly,
-                  clImageFormat, New IntPtr(imageSize.Width),
-                  New IntPtr(imageSize.Height), IntPtr.Zero,
+                  clImageFormat, imageSize.Width,
+                  imageSize.Height, 0,
                   backBuffer)
 
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
         _pStack += 1UI
 
         'Copy input image from the host to the GPU.  
-        Dim originPtr = {IntPtr.Zero, IntPtr.Zero, IntPtr.Zero}
-        Dim regionPtr = {New IntPtr(imageSize.Width), New IntPtr(imageSize.Height), New IntPtr(1)}
+        Dim originPtr As SizeT() = {0, 0, 0}
+        Dim regionPtr As SizeT() = {imageSize.Width, imageSize.Height, 1}
         Dim workGroupSizePtr = regionPtr
 
-        EnqueueWriteImage(_cmdQueue, mem, True, originPtr, regionPtr, IntPtr.Zero,
-                          IntPtr.Zero, backBuffer, 0, Nothing, Nothing)
+        EnqueueWriteImage(_cmdQueue, mem, True, originPtr, regionPtr, 0,
+                          0, backBuffer, 0, Nothing)
 
         _maxWidth = Math.Max(_maxWidth, imageSize.Width)
         _maxHeight = Math.Max(_maxHeight, imageSize.Height)
@@ -65,8 +64,8 @@ Public Class CommandList
     ''' </summary>
     Public Sub LoadOutputImage2D(imageSize As Rectangle, backBuffer As IntPtr)
         Dim mem = CreateImage2D(_method.DeviceContext, MemFlags.WriteOnly,
-                  clImageFormat, New IntPtr(imageSize.Width),
-                  New IntPtr(imageSize.Height), IntPtr.Zero,
+                  clImageFormat, imageSize.Width,
+                  imageSize.Height, 0,
                   backBuffer)
 
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
@@ -82,13 +81,12 @@ Public Class CommandList
     End Sub
 
     Public Sub LoadInput(ptr As IntPtr, length As Integer)
-        Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.ReadOnly,
-                               New IntPtr(length), ptr)
+        Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.ReadOnly, length, ptr)
 
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
         _pStack += 1UI
 
-        EnqueueWriteBuffer(_cmdQueue, mem, True, IntPtr.Zero, New IntPtr(length), ptr, 0, Nothing, Nothing)
+        EnqueueWriteBuffer(_cmdQueue, mem, True, 0, length, ptr, 0, Nothing)
 
         _maxLength = Math.Max(_maxLength, length)
         _disposeMem.Add(mem)
@@ -96,7 +94,7 @@ Public Class CommandList
 
     Public Sub LoadOutput(ptr As IntPtr, length As Integer)
         Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.WriteOnly,
-                               New IntPtr(length), ptr)
+                               length, ptr)
 
         SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
         _pStack += 1UI
@@ -112,13 +110,13 @@ Public Class CommandList
     ''' 以处理一组数据的方式调用 OpenCL 方法。
     ''' </summary>
     Public Sub [Call](elementSize As Integer)
-        Dim globalWs = {New IntPtr(_maxLength \ elementSize)}
-        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 1, Nothing, globalWs, Nothing, 0, Nothing, Nothing)
+        Dim globalWs As SizeT() = {_maxLength \ elementSize}
+        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 1, Nothing, globalWs, Nothing, 0, Nothing)
         Finish(_cmdQueue)
 
         Do While _copyBackMem.Count > 0
-            EnqueueReadBuffer(_cmdQueue, _copyBackMem.Pop, True, Nothing, New IntPtr(_maxLength),
-                              _copyBackPtr.Pop, 0, Nothing, Nothing)
+            EnqueueReadBuffer(_cmdQueue, _copyBackMem.Pop, True, Nothing, _maxLength,
+                              _copyBackPtr.Pop, 0, Nothing)
         Loop
 
         For i = 0 To _disposeMem.Count - 1
@@ -134,15 +132,15 @@ Public Class CommandList
     ''' 以处理图片的方式调用 OpenCL 方法。
     ''' </summary>
     Public Sub CallImage2D()
-        Dim originPtr = {IntPtr.Zero, IntPtr.Zero, IntPtr.Zero}
-        Dim regionPtr = {New IntPtr(_maxWidth), New IntPtr(_maxHeight), New IntPtr(1)}
+        Dim originPtr As SizeT() = {0, 0, 0}
+        Dim regionPtr As SizeT() = {_maxWidth, _maxHeight, 1}
         Dim workGroupSizePtr = regionPtr
-        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 2, Nothing, workGroupSizePtr, Nothing, 0, Nothing, Nothing)
+        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 2, Nothing, workGroupSizePtr, Nothing, 0, Nothing)
         Finish(_cmdQueue)
 
         Do While _copyBackMem.Count > 0
             EnqueueReadImage(_cmdQueue, _copyBackMem.Pop, True, originPtr, regionPtr,
-                             IntPtr.Zero, IntPtr.Zero, _copyBackPtr.Pop, 0, Nothing, Nothing)
+                             0, 0, _copyBackPtr.Pop, 0, Nothing)
         Loop
 
         For i = 0 To _disposeMem.Count - 1
@@ -166,7 +164,7 @@ Public Class CommandList
                 GC.SuppressFinalize(Me)
             End If
 
-            _cmdQueue.Dispose()
+            ReleaseCommandQueue(_cmdQueue)
             For i = 0 To _disposeMem.Count - 1
                 ReleaseMemObject(_disposeMem(i))
             Next

@@ -1,6 +1,6 @@
 Imports System.IO
 Imports System.Reflection
-Imports OpenCL.Net
+Imports OpenCLBasic.CodeGen
 
 Module Program
     Sub Main(args As String())
@@ -8,38 +8,69 @@ Module Program
             Console.WriteLine("用法: 输出目录作为第一个参数。产生 ClMethods.g.vb。")
         End If
         Console.WriteLine("正在执行代码生成")
-        Dim cl = From m In GetType(Cl).GetRuntimeMethods
-                 Where m.IsPublic
+        Dim cl = From m In GetType(UnsafeNativeMethods).GetRuntimeMethods
+                 Where m.Name.StartsWith("cl")
         Dim sb As New IndentStringBuilder
-        sb.AppendLine("Imports OpenCL.Net
-
+        sb.AppendLine("Option Strict On
+Imports System.Runtime.InteropServices
 ' 这个文件由代码生成。重新执行 CodeGen 会覆盖此文件。
 Partial Public Module ClMethods").IncreaseIndent()
 
         For Each method In cl
             Dim param = method.GetParameters
+            Dim name = method.Name.Substring(2)
+            Dim genName = name
+            If method.IsGenericMethod Then
+                genName += "(Of " + String.Join(", ", From g In method.GetGenericArguments
+                                                      Select n = g.Name + If(g.GetGenericParameterConstraints.FirstOrDefault?.Equals(GetType(ValueType)), " As Structure", "")) + ")"
+                name += "(Of " + String.Join(", ", From g In method.GetGenericArguments
+                                                   Select n = g.Name) + ")"
+            End If
             If param.Length > 0 Then
-                Dim name = method.Name
-                Dim genName = name
-                If method.IsGenericMethod Then
-                    genName += "(Of " + String.Join(", ", From g In method.GetGenericArguments
-                                                          Select n = g.Name + If(g.GetGenericParameterConstraints.FirstOrDefault?.Equals(GetType(ValueType)), " As Structure", "")) + ")"
-                    name += "(Of " + String.Join(", ", From g In method.GetGenericArguments
-                                                       Select n = g.Name) + ")"
+                If method.ReturnType.Equals(GetType(ErrorCode)) Then
+                    If param(param.Length - 1).ParameterType.IsByRef Then
+                        WriteSubAsFunction(sb, name, genName, param)
+                    Else
+                        WriteSub(sb, name, genName, param)
+                    End If
+                ElseIf param.Length > 0 AndAlso param(param.Length - 1).ParameterType.Equals(GetType(ErrorCode).MakeByRefType) Then
+                    WriteFunction(sb, name, genName, param, GetTypeName(method.ReturnType), True)
+                Else
+                    WriteFunction(sb, name, genName, param, GetTypeName(method.ReturnType), False)
                 End If
-                If param(param.Length - 1).ParameterType.Equals(GetType(ErrorCode).MakeByRefType) Then
-                    WriteFunction(sb, name, genName, param, GetTypeName(method.ReturnType))
-                ElseIf method.ReturnType.Equals(GetType(ErrorCode)) Then
-                    WriteSub(sb, name, genName, param)
-                End If
+            Else
+                WriteFunction(sb, name, genName, param, GetTypeName(method.ReturnType), False)
             End If
         Next
 
         sb.DecreaseIndent.AppendLine("End Module")
         File.WriteAllText(args(0) + "\ClMethods.g.vb", sb.ToString)
 
-        Console.WriteLine("完成。按任意键退出。")
-        Console.ReadKey()
+        Console.WriteLine("完成。")
+    End Sub
+
+    Private Sub WriteSubAsFunction(sb As IndentStringBuilder, name As String, genName As String, params() As ParameterInfo)
+        Dim paramCodes = From p In params
+                         Take params.Length - 1
+                         Select GetParamDecl(p)
+        Dim paramCall = String.Join(", ", (From p In params
+                                           Select PreserveName(p.Name)))
+        Dim returnTypeName = GetTypeName(params(params.Length - 1).ParameterType)
+        Dim retValName = params(params.Length - 1).Name
+        sb.IndentAppend("Public Function ").
+           Append(genName).
+           Append("(").
+           Append(String.Join(", ", paramCodes)).
+           Append(") As ").
+           AppendLine(returnTypeName).
+           IncreaseIndent().
+           IndentAppendLine($"Dim {retValName} As {returnTypeName} = Nothing").
+           IndentAppendLine($"Dim errCode = cl{name}({paramCall})").
+           IndentAppendLine("CheckErr(errCode)").
+           IndentAppendLine($"Return {retValName}").
+           DecreaseIndent().
+           IndentAppendLine("End Function").
+           AppendLine()
     End Sub
 
     Private Function GetTypeName(tp As Type) As String
@@ -68,7 +99,7 @@ Partial Public Module ClMethods").IncreaseIndent()
 
     Private Sub WriteSub(sb As IndentStringBuilder, name As String, genName As String, params() As ParameterInfo)
         Dim paramCodes = From p In params
-                         Select PreserveName(p.Name) + " As " + GetTypeName(p.ParameterType)
+                         Select GetParamDecl(p)
         Dim paramCall = String.Join(", ", From p In params Select PreserveName(p.Name))
         sb.IndentAppend("Public Sub ").
            Append(genName).
@@ -76,31 +107,50 @@ Partial Public Module ClMethods").IncreaseIndent()
            Append(String.Join(", ", paramCodes)).
            AppendLine(")").
            IncreaseIndent().
-           IndentAppendLine($"errCode = Cl.{name}({paramCall})").
+           IndentAppendLine($"errCode = cl{name}({paramCall})").
            IndentAppendLine("CheckErr(errCode)").
            DecreaseIndent().
            IndentAppendLine("End Sub").
            AppendLine()
     End Sub
 
-    Private Sub WriteFunction(sb As IndentStringBuilder, name As String, genName As String, params() As ParameterInfo, returnName As String)
+    Private Function GetParamDecl(p As ParameterInfo) As String
+        Dim inOut As String
+        If p.ParameterType.IsByRef Then
+            If p.IsOut Then
+                inOut = "<Out> ByRef "
+            Else
+                inOut = "ByRef "
+            End If
+        Else
+            inOut = String.Empty
+        End If
+        Return inOut + PreserveName(p.Name) + " As " + GetTypeName(p.ParameterType)
+    End Function
+
+    Private Sub WriteFunction(sb As IndentStringBuilder, name As String, genName As String, params() As ParameterInfo, returnName As String, hasErrorCode As Boolean)
+        Dim takeCount = If(hasErrorCode, params.Length - 1, params.Length)
         Dim paramCodes = From p In params
-                         Take params.Length - 1
-                         Select PreserveName(p.Name) + " As " + GetTypeName(p.ParameterType)
+                         Take takeCount
+                         Select GetParamDecl(p)
         Dim paramCall = String.Join(", ", (From p In params
-                                           Take params.Length - 1
-                                           Select PreserveName(p.Name)).Append("errCode"))
+                                           Take takeCount
+                                           Select PreserveName(p.Name)).Concat(If(hasErrorCode, {"errCode"}, {})))
         sb.IndentAppend("Public Function ").
            Append(genName).
            Append("(").
            Append(String.Join(", ", paramCodes)).
            Append(") As ").
            AppendLine(returnName).
-           IncreaseIndent().
-           IndentAppendLine($"Dim value = Cl.{name}({paramCall})").
-           IndentAppendLine("CheckErr(errCode)").
-           IndentAppendLine("Return value").
-           DecreaseIndent().
+           IncreaseIndent()
+        If hasErrorCode Then
+            sb.IndentAppendLine($"Dim value = cl{name}({paramCall})")
+            sb.IndentAppendLine("CheckErr(errCode)")
+            sb.IndentAppendLine("Return value")
+        Else
+            sb.IndentAppendLine($"Return cl{name}({paramCall})")
+        End If
+        sb.DecreaseIndent().
            IndentAppendLine("End Function").
            AppendLine()
     End Sub

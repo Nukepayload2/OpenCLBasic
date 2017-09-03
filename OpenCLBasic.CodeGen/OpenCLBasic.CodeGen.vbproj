@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenCL.Net\OpenCL.Net.csproj" />
+    <ProjectReference Include="..\OpenCLBasic\OpenCLBasic.vbproj" />
   </ItemGroup>
 
 </Project>

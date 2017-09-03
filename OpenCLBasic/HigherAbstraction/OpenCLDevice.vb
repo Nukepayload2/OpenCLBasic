@@ -1,16 +1,13 @@
-﻿Imports System.IO
-Imports OpenCL.Net
-
-Public Class OpenCLDevice
+﻿Public Class OpenCLDevice
     Implements IOpenCLResourceCreator
 
-    Private ReadOnly _id As Device
+    Private ReadOnly _id As DeviceHandle
 
-    Public Sub New(device As Device)
+    Public Sub New(device As DeviceHandle)
         _id = device
     End Sub
 
-    Public ReadOnly Property Device As Device Implements IOpenCLResourceCreator.Device
+    Public ReadOnly Property Device As DeviceHandle Implements IOpenCLResourceCreator.Device
         Get
             Return _id
         End Get
@@ -22,10 +19,10 @@ Public Class OpenCLDevice
             Try
                 Dim deviceIds = GetDeviceIDs(platform, DeviceType.Gpu)
                 For Each dev In From d In deviceIds
-                                Where GetDeviceInfo(d, DeviceInfo.ImageSupport).CastTo(Of Integer) = 1
-                    Console.Write(New StreamReader(GetDeviceInfo(dev, DeviceInfo.Vendor).AsStream).ReadToEnd)
+                                Where GetDeviceInfo(d, DeviceInfo.ImageSupport).Read(Of Integer) = 1
+                    Console.Write(GetDeviceInfo(dev, DeviceInfo.Vendor).ToAnsiString)
                     Console.Write(" - ")
-                    Console.WriteLine(New StreamReader(GetDeviceInfo(dev, DeviceInfo.Name).AsStream).ReadToEnd)
+                    Console.WriteLine(GetDeviceInfo(dev, DeviceInfo.Name).ToAnsiString)
                     Return New OpenCLDevice(dev)
                 Next
             Catch ex As Exception

@@ -7,8 +7,6 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "OpenCLBasic", "OpenCLBasic\
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "OpenCLBasic.CodeGen", "OpenCLBasic.CodeGen\OpenCLBasic.CodeGen.vbproj", "{C044944A-3DA0-4699-9A6E-58D4A6C97A30}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenCL.Net", "OpenCL.Net\OpenCL.Net.csproj", "{F4F98766-3F96-4FF7-B084-485C19AC69A1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,14 +31,6 @@ Global
 		{C044944A-3DA0-4699-9A6E-58D4A6C97A30}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C044944A-3DA0-4699-9A6E-58D4A6C97A30}.Release|x64.ActiveCfg = Release|Any CPU
 		{C044944A-3DA0-4699-9A6E-58D4A6C97A30}.Release|x64.Build.0 = Release|Any CPU
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Debug|x64.ActiveCfg = Debug|x64
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Debug|x64.Build.0 = Debug|x64
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Release|x64.ActiveCfg = Release|x64
-		{F4F98766-3F96-4FF7-B084-485C19AC69A1}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

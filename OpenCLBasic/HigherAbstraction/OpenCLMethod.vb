@@ -1,39 +1,38 @@
 ﻿Imports System.IO
 Imports System.Text
-Imports OpenCL.Net
 
 Public Class OpenCLMethod
     Implements IOpenCLResourceCreatorWithContext, IDisposable
 
     Private _session As IOpenCLResourceCreatorWithContext
-    Private ReadOnly _program As Program
-    Private ReadOnly _kernel As Kernel
+    Private ReadOnly _program As ProgramHandle
+    Private ReadOnly _kernel As KernelHandle
 
-    Friend Sub New(session As IOpenCLResourceCreatorWithContext, program As Program, kernel As Kernel)
+    Friend Sub New(session As IOpenCLResourceCreatorWithContext, program As ProgramHandle, kernel As KernelHandle)
         _session = session
         _program = program
         _kernel = kernel
     End Sub
 
-    Public ReadOnly Property DeviceContext As Context Implements IOpenCLResourceCreatorWithContext.DeviceContext
+    Public ReadOnly Property DeviceContext As ContextHandle Implements IOpenCLResourceCreatorWithContext.DeviceContext
         Get
             Return _session.DeviceContext
         End Get
     End Property
 
-    Public ReadOnly Property Device As Device Implements IOpenCLResourceCreator.Device
+    Public ReadOnly Property Device As DeviceHandle Implements IOpenCLResourceCreator.Device
         Get
             Return _session.Device
         End Get
     End Property
 
-    Public ReadOnly Property Program As Program
+    Public ReadOnly Property Program As ProgramHandle
         Get
             Return _program
         End Get
     End Property
 
-    Public ReadOnly Property Kernel As Kernel
+    Public ReadOnly Property Kernel As KernelHandle
         Get
             Return _kernel
         End Get
@@ -46,11 +45,9 @@ Public Class OpenCLMethod
             BuildProgram(program, 1, {device}, String.Empty, Nothing, IntPtr.Zero)
             Dim kernel = CreateKernel(program, entryName)
             Return New OpenCLMethod(session, program, kernel)
-        Catch ex As Cl.Exception
+        Catch ex As ClException
             Dim buf = GetProgramBuildInfo(program, device, ProgramBuildInfo.Log)
-            Using strm As New StreamReader(buf.AsStream, Encoding.ASCII)
-                Throw New ArgumentException(strm.ReadToEnd(), NameOf(programSource))
-            End Using
+            Throw New ArgumentException(buf.ToAnsiString, NameOf(programSource))
         End Try
     End Function
 
@@ -69,8 +66,8 @@ Public Class OpenCLMethod
                 GC.SuppressFinalize(Me)
             End If
 
-            _program.Dispose()
-            _kernel.Dispose()
+            ReleaseProgram(_program)
+            ReleaseKernel(_kernel)
             ' TODO: 释放未托管资源(未托管对象)并在以下内容中替代 Finalize()。
             ' TODO: 将大型字段设置为 null。
         End If

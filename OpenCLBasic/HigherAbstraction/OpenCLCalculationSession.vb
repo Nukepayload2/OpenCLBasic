@@ -1,24 +1,22 @@
-﻿Imports OpenCL.Net
-
-Public Class OpenCLCalculationSession
+﻿Public Class OpenCLCalculationSession
     Implements IOpenCLResourceCreatorWithContext, IDisposable
 
-    Private ReadOnly _context As Context
+    Private ReadOnly _context As ContextHandle
     Private ReadOnly _device As IOpenCLResourceCreator
 
-    Public ReadOnly Property DeviceContext As Context Implements IOpenCLResourceCreatorWithContext.DeviceContext
+    Public ReadOnly Property DeviceContext As ContextHandle Implements IOpenCLResourceCreatorWithContext.DeviceContext
         Get
             Return _context
         End Get
     End Property
 
-    Public ReadOnly Property Device As Device Implements IOpenCLResourceCreator.Device
+    Public ReadOnly Property Device As DeviceHandle Implements IOpenCLResourceCreator.Device
         Get
             Return _device.Device
         End Get
     End Property
 
-    Public Event ContextNotify As Cl.ContextNotify
+    Public Event ContextNotify As ContextNotify
 
     Private Sub OnContextNotify(errInfo As String, data As Byte(), cb As IntPtr, userData As IntPtr)
         RaiseEvent ContextNotify(errInfo, data, cb, userData)
@@ -44,7 +42,7 @@ Public Class OpenCLCalculationSession
                 GC.SuppressFinalize(Me)
             End If
 
-            _context.Dispose()
+            ReleaseContext(_context)
             ' TODO: 释放未托管资源(未托管对象)并在以下内容中替代 Finalize()。
             ' TODO: 将大型字段设置为 null。
         End If
