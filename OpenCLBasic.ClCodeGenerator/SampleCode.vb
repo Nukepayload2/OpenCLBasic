@@ -1,7 +1,7 @@
 Option Strict Off
 Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
-Imports OpenCLBasic.FakeRuntime
+Imports OpenCLBasic.ClCodeGenerator.FakeRuntime
 
 Public Module SampleProgram
 
@@ -11,7 +11,7 @@ Public Module SampleProgram
     ' Public -> __kernel, ByVal -> __read_only, <Out> ByRef -> __write_only, GetGlobalId 变量 -> const
     ' 其中的内容应该被阻止直接执行。
     <MethodImpl(MethodImplOptions.ForwardRef)>
-    Public Sub ImageDiffBlend(ByVal imageA As Image2D, ByVal imageB As Image2D, <Out> ByRef imageC As Image2D)
+    Public Sub ImageDiffBlend(imageA As Image2D, imageB As Image2D, <Out> ByRef imageC As Image2D)
         Dim x As Integer = GetGlobalId(0)
         Dim y As Integer = GetGlobalId(1)
 

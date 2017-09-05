@@ -1,13 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenCLBasic\OpenCLBasic.vbproj" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="2.3.2" />
   </ItemGroup>
 
 </Project>
