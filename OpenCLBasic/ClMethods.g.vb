@@ -1,5 +1,7 @@
 Option Strict On
 Imports System.Runtime.InteropServices
+Imports OpenCLBasic.Native
+
 ' 这个文件由代码生成。重新执行 CodeGen 会覆盖此文件。
 Partial Public Module ClMethods
     Public Sub ReleaseKernel(kernel As KernelHandle)

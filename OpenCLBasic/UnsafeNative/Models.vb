@@ -1,58 +1,349 @@
 ﻿Imports System.Runtime.InteropServices
+Imports OpenCLBasic
 
 Public Structure ContextHandle
+    Implements IEquatable(Of ContextHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot ContextHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, ContextHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As ContextHandle) As Boolean Implements IEquatable(Of ContextHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As ContextHandle, right As ContextHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As ContextHandle, right As ContextHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure ProgramHandle
+    Implements IEquatable(Of ProgramHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot ProgramHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, ProgramHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As ProgramHandle) As Boolean Implements IEquatable(Of ProgramHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As ProgramHandle, right As ProgramHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As ProgramHandle, right As ProgramHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
+<StructLayout(LayoutKind.Explicit)>
 Public Structure SizeT
-    Public Value As IntPtr
+    Implements IEquatable(Of SizeT)
+
+    Sub New(value As Integer)
+        SignedValue = New IntPtr(value)
+    End Sub
+    Sub New(value As Long)
+        SignedValue = New IntPtr(value)
+    End Sub
+    Sub New(value As UInteger)
+        UnsignedValue = New UIntPtr(value)
+    End Sub
+    Sub New(value As ULong)
+        UnsignedValue = New UIntPtr(value)
+    End Sub
+
+    <FieldOffset(0)>
+    Public SignedValue As IntPtr
+
+    <FieldOffset(0)>
+    Public UnsignedValue As UIntPtr
+
+    Public Shared Widening Operator CType(value As UInteger) As SizeT
+        Return New SizeT With {.UnsignedValue = New UIntPtr(value)}
+    End Operator
+
+    Public Shared Widening Operator CType(value As ULong) As SizeT
+        Return New SizeT With {.UnsignedValue = New UIntPtr(value)}
+    End Operator
+
     Public Shared Widening Operator CType(value As Integer) As SizeT
-        Return New SizeT With {.Value = New IntPtr(value)}
+        Return New SizeT With {.SignedValue = New IntPtr(value)}
     End Operator
+
     Public Shared Widening Operator CType(value As Long) As SizeT
-        Return New SizeT With {.Value = New IntPtr(value)}
+        Return New SizeT With {.SignedValue = New IntPtr(value)}
     End Operator
+
     Public Shared Widening Operator CType(value As SizeT) As Long
-        Return value.Value.ToInt64
+        Return value.SignedValue.ToInt64
     End Operator
+
+    Public Shared Widening Operator CType(value As SizeT) As ULong
+        Return value.UnsignedValue.ToUInt64
+    End Operator
+
+    Public Shared Narrowing Operator CType(value As SizeT) As UInteger
+        Return value.UnsignedValue.ToUInt32
+    End Operator
+
     Public Shared Narrowing Operator CType(value As SizeT) As Integer
-        Return value.Value.ToInt32
+        Return value.SignedValue.ToInt32
+    End Operator
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot SizeT Then
+            Return False
+        End If
+        Return SignedValue = DirectCast(obj, SizeT).SignedValue
+    End Function
+
+    Public Overloads Function Equals(other As SizeT) As Boolean Implements IEquatable(Of SizeT).Equals
+        Return SignedValue = other.SignedValue
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return SignedValue.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As SizeT, right As SizeT) As Boolean
+        Return left.SignedValue = right.SignedValue
+    End Operator
+
+    Public Shared Operator <>(left As SizeT, right As SizeT) As Boolean
+        Return left.SignedValue <> right.SignedValue
     End Operator
 End Structure
 
 Public Structure ClBuffer
+    Implements IEquatable(Of ClBuffer)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot ClBuffer Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, ClBuffer).Value
+    End Function
+
+    Public Overloads Function Equals(other As ClBuffer) As Boolean Implements IEquatable(Of ClBuffer).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As ClBuffer, right As ClBuffer) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As ClBuffer, right As ClBuffer) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure EventHandle
+    Implements IEquatable(Of EventHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot EventHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, EventHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As EventHandle) As Boolean Implements IEquatable(Of EventHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As EventHandle, right As EventHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As EventHandle, right As EventHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure CommandQueueHandle
+    Implements IEquatable(Of CommandQueueHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot CommandQueueHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, CommandQueueHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As CommandQueueHandle) As Boolean Implements IEquatable(Of CommandQueueHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As CommandQueueHandle, right As CommandQueueHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As CommandQueueHandle, right As CommandQueueHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure DeviceHandle
+    Implements IEquatable(Of DeviceHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot DeviceHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, DeviceHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As DeviceHandle) As Boolean Implements IEquatable(Of DeviceHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As DeviceHandle, right As DeviceHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As DeviceHandle, right As DeviceHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure PlatformHandle
+    Implements IEquatable(Of PlatformHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot PlatformHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, PlatformHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As PlatformHandle) As Boolean Implements IEquatable(Of PlatformHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As PlatformHandle, right As PlatformHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As PlatformHandle, right As PlatformHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure SamplerHandle
+    Implements IEquatable(Of SamplerHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot SamplerHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, SamplerHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As SamplerHandle) As Boolean Implements IEquatable(Of SamplerHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As SamplerHandle, right As SamplerHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As SamplerHandle, right As SamplerHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure KernelHandle
+    Implements IEquatable(Of KernelHandle)
+
     Public Value As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot KernelHandle Then
+            Return False
+        End If
+        Return Value = DirectCast(obj, KernelHandle).Value
+    End Function
+
+    Public Overloads Function Equals(other As KernelHandle) As Boolean Implements IEquatable(Of KernelHandle).Equals
+        Return Value = other.Value
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Value.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As KernelHandle, right As KernelHandle) As Boolean
+        Return left.Value = right.Value
+    End Operator
+
+    Public Shared Operator <>(left As KernelHandle, right As KernelHandle) As Boolean
+        Return left.Value <> right.Value
+    End Operator
 End Structure
 
 Public Structure InfoBuffer
+    Implements IEquatable(Of InfoBuffer)
+
     Public Ptr As IntPtr
     Public Size As Integer
     Friend _storage As Byte()
@@ -88,9 +379,34 @@ Public Structure InfoBuffer
         Size = 0
     End Sub
 
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot InfoBuffer Then
+            Return False
+        End If
+        Dim buf = DirectCast(obj, InfoBuffer)
+        Return buf.Ptr = Ptr AndAlso buf.Size = Size
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return Ptr.GetHashCode Xor Size.GetHashCode
+    End Function
+
+    Public Shared Operator =(left As InfoBuffer, right As InfoBuffer) As Boolean
+        Return left.Ptr = right.Ptr AndAlso left.Size = right.Size
+    End Operator
+
+    Public Shared Operator <>(left As InfoBuffer, right As InfoBuffer) As Boolean
+        Return left.Ptr <> right.Ptr OrElse left.Size <> right.Size
+    End Operator
+
+    Public Overloads Function Equals(buf As InfoBuffer) As Boolean Implements IEquatable(Of InfoBuffer).Equals
+        Return buf.Ptr = Ptr AndAlso buf.Size = Size
+    End Function
 End Structure
 
 Public Structure ImageFormat
+    Implements IEquatable(Of ImageFormat)
+
     Public ChannelOrder As ChannelOrder
     Public ChannelType As ChannelType
 
@@ -98,12 +414,63 @@ Public Structure ImageFormat
         Me.ChannelOrder = channelOrder
         Me.ChannelType = channelType
     End Sub
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot ImageFormat Then
+            Return False
+        End If
+        Dim other = DirectCast(obj, ImageFormat)
+        Return other.ChannelOrder = ChannelOrder AndAlso other.ChannelType = ChannelType
+    End Function
+
+    Public Overloads Function Equals(other As ImageFormat) As Boolean Implements IEquatable(Of ImageFormat).Equals
+        Return other.ChannelOrder = ChannelOrder AndAlso other.ChannelType = ChannelType
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return CInt((ChannelOrder << 8) Or ChannelType)
+    End Function
+
+    Public Shared Operator =(left As ImageFormat, right As ImageFormat) As Boolean
+        Return left.ChannelOrder = right.ChannelOrder AndAlso left.ChannelType = right.ChannelType
+    End Operator
+
+    Public Shared Operator <>(left As ImageFormat, right As ImageFormat) As Boolean
+        Return left.ChannelOrder <> right.ChannelOrder OrElse left.ChannelType <> right.ChannelType
+    End Operator
 End Structure
 
 Public Structure ContextProperty
+    Implements IEquatable(Of ContextProperty)
+
     Public PropertyName As ContextProperties
     Public PropertyValue As IntPtr
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj IsNot ContextProperty Then
+            Return False
+        End If
+        Dim other = DirectCast(obj, ContextProperty)
+        Return PropertyValue = other.PropertyValue AndAlso PropertyName = other.PropertyName
+    End Function
+
+    Public Overloads Function Equals(other As ContextProperty) As Boolean Implements IEquatable(Of ContextProperty).Equals
+        Return PropertyValue = other.PropertyValue AndAlso PropertyName = other.PropertyName
+    End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return PropertyValue.GetHashCode Xor CInt(PropertyName)
+    End Function
+
+    Public Shared Operator =(left As ContextProperty, right As ContextProperty) As Boolean
+        Return left.PropertyValue = right.PropertyValue AndAlso left.PropertyName = right.PropertyName
+    End Operator
+
+    Public Shared Operator <>(left As ContextProperty, right As ContextProperty) As Boolean
+        Return left.PropertyValue <> right.PropertyValue OrElse left.PropertyName <> right.PropertyName
+    End Operator
 End Structure
+
 
 Public Delegate Sub ContextNotify(errInfo As String, data As Byte(), cb As IntPtr, userData As IntPtr)
 
@@ -394,6 +761,7 @@ Public Enum DeviceInfo As UInteger
     Platform = &H1031
 End Enum
 
+#Disable Warning CA2217 ' Do not mark enums with FlagsAttribute
 <Flags>
 Public Enum DeviceType As ULong
     [Default] = (1 << 0)
@@ -402,6 +770,7 @@ Public Enum DeviceType As ULong
     Accelerator = (1 << 3)
     All = &HFFFFFFFFUI
 End Enum
+#Enable Warning CA2217 ' Do not mark enums with FlagsAttribute
 
 Public Enum PlatformInfo As UInteger
     Profile = &H900

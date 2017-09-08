@@ -1,4 +1,4 @@
-﻿Public Class FakeRuntime
+﻿Public NotInheritable Class FakeRuntime
     Public Enum Sampler
         Placeholder
     End Enum
@@ -44,10 +44,10 @@
         End Operator
     End Structure
 
-    Public Shared Sub WriteImageUI(imageC As Image2D, coord As Int2, uInt4 As UInt4)
+    Public Shared Sub WriteImageUI(image As Image2D, coord As Int2, uInt4 As UInt4)
     End Sub
 
-    Public Shared Function ReadImageUI(imageA As Image2D, sampler As Sampler, coord As Int2) As UInt4
+    Public Shared Function ReadImageUI(image As Image2D, sampler As Sampler, coord As Int2) As UInt4
     End Function
 
 End Class

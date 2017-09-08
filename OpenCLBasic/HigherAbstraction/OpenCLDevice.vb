@@ -1,4 +1,6 @@
-﻿Public Class OpenCLDevice
+﻿Imports OpenCLBasic.MarshalHelpers
+
+Public Class OpenCLDevice
     Implements IOpenCLResourceCreator
 
     Private ReadOnly _id As DeviceHandle

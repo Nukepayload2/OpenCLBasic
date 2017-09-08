@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports OpenCLBasic.Native
 
 <HideModuleName>
 Partial Public Module ClMethods
@@ -41,7 +42,7 @@ Partial Public Module ClMethods
     ) As InfoBuffer
         Dim size As SizeT
         errCode = clGetDeviceInfo(device, paramKind, 0, Nothing, size)
-        Dim sizeInt32 = size.Value.ToInt32
+        Dim sizeInt32 = size.SignedValue.ToInt32
 
         Dim info = InfoBuffer.Alloc(sizeInt32)
         errCode = clGetDeviceInfo(device, paramKind, size, info.Ptr, size)
@@ -57,7 +58,7 @@ Partial Public Module ClMethods
     ) As InfoBuffer
         Dim size As SizeT
         errCode = clGetProgramBuildInfo(program, device, paramKind, 0, Nothing, size)
-        Dim sizeInt32 = size.Value.ToInt32
+        Dim sizeInt32 = size.SignedValue.ToInt32
 
         Dim info = InfoBuffer.Alloc(sizeInt32)
         errCode = clGetProgramBuildInfo(program, device, paramKind, size, info.Ptr, size)
