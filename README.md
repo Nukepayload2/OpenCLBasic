@@ -1,7 +1,7 @@
 # OpenCLBasic
 Provides Visual Basic friendly OpenCL API bindings as a .NET Standard 2.0 class library.
 
-It's a replacement of OpenCL.Net. Users will not be limited with EPL which is too strict.
+It's a replacement of OpenCL.Net. Users will not be limited with the Eclipse Public License which is too strict.
 
 ## VB friendly
 You'll not encounter the following issues if you replace OpenCL.Net with this library:
@@ -19,7 +19,7 @@ With enhanced wrapping logic, unnecessary memory copy and pinning are reduced. I
 # OpenCLBasic
 对 VB 友好的 OpenCL 包装 .NET Standard 2.0 类库。
 
-这是 OpenCL.Net 的替代品。让使用者不再受到 EPL 这样严格的限制。
+这是 OpenCL.Net 的替代品。让使用者不再受到 Eclipse Public License 这样严格的限制。
 
 ## VB 友好
 使用这个类库将不再遇到可能在 OpenCL.Net 遇到的以下麻烦:
