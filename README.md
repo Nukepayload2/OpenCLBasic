@@ -16,6 +16,9 @@ You'll not encounter the following issues if you replace OpenCL.Net with this li
 ## Performance improvements
 With enhanced wrapping logic, unnecessary memory copy and pinning are reduced. It's 20ms to 50ms faster while processing 200 images on the author's low end computer.
 
+## Releases
+[View on Nuget](https://www.nuget.org/packages/OpenCLBasic/)
+
 # OpenCLBasic
 对 VB 友好的 OpenCL 包装 .NET Standard 2.0 类库。
 
@@ -33,3 +36,6 @@ With enhanced wrapping logic, unnecessary memory copy and pinning are reduced. I
 
 ## 性能提升
 改进了包装逻辑，减少了内存复制和固定。在作者的破电脑上处理 200 张图片加速 20 到 50 毫秒。
+
+## 发行
+[在 Nuget 查看](https://www.nuget.org/packages/OpenCLBasic/)
