@@ -4,7 +4,19 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <OptionStrict>On</OptionStrict>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
+    <Authors>Nukepayload2</Authors>
+    <Company>Nukepayload2</Company>
+    <Description>Provides Visual Basic friendly OpenCL API binding.
+提供对 Visual Basic 友好的 OpenCL API 包装。</Description>
+    <Copyright>Copyright 2017 Nukepayload2</Copyright>
+    <PackageProjectUrl>https://github.com/Nukepayload2/OpenCLBasic</PackageProjectUrl>
+    <PackageReleaseNotes>Initial commit.
+初始提交。</PackageReleaseNotes>
+    <PackageTags>opencl</PackageTags>
+    <RepositoryUrl>https://github.com/Nukepayload2/OpenCLBasic.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>zh-Hans</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -1,39 +1,8 @@
 Option Strict On
 Imports System.Runtime.InteropServices
 Imports OpenCLBasic.Native
-
 ' 这个文件由代码生成。重新执行 CodeGen 会覆盖此文件。
 Partial Public Module ClMethods
-    Public Sub ReleaseKernel(kernel As KernelHandle)
-        errCode = clReleaseKernel(kernel)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseMemObject(memObj As ClBuffer)
-        errCode = clReleaseMemObject(memObj)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseProgram(program As ProgramHandle)
-        errCode = clReleaseProgram(program)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub ReleaseSampler(sampler As SamplerHandle)
-        errCode = clReleaseSampler(sampler)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub RetainCommandQueue(commandQueue As CommandQueueHandle)
-        errCode = clRetainCommandQueue(commandQueue)
-        CheckErr(errCode)
-    End Sub
-
-    Public Sub RetainContext(context As ContextHandle)
-        errCode = clRetainContext(context)
-        CheckErr(errCode)
-    End Sub
-
     Public Sub RetainEvent(eventHandle As EventHandle)
         errCode = clRetainEvent(eventHandle)
         CheckErr(errCode)
@@ -80,25 +49,6 @@ Partial Public Module ClMethods
         CheckErr(errCode)
     End Sub
 
-    Public Sub EnqueueWaitForEvents(commandQueue As CommandQueueHandle, numEventsInWaitList As UInt32, eventWaitList As EventHandle())
-        errCode = clEnqueueWaitForEvents(commandQueue, numEventsInWaitList, eventWaitList)
-        CheckErr(errCode)
-    End Sub
-
-    Public Function EnqueueWriteBuffer(commandQueue As CommandQueueHandle, buffer As ClBuffer, blockingWrite As Boolean, offsetInBytes As SizeT, lengthInBytes As SizeT, ptr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
-        Dim evt As EventHandle = Nothing
-        Dim errCode = clEnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offsetInBytes, lengthInBytes, ptr, numEventsInWaitList, eventWaitList, evt)
-        CheckErr(errCode)
-        Return evt
-    End Function
-
-    Public Function EnqueueWriteImage(commandQueue As CommandQueueHandle, image As ClBuffer, blockingWrite As Boolean, origin As SizeT(), region As SizeT(), rowPitch As SizeT, slicePitch As SizeT, ptr As IntPtr, numEventsIntWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
-        Dim evt As EventHandle = Nothing
-        Dim errCode = clEnqueueWriteImage(commandQueue, image, blockingWrite, origin, region, rowPitch, slicePitch, ptr, numEventsIntWaitList, eventWaitList, evt)
-        CheckErr(errCode)
-        Return evt
-    End Function
-
     Public Sub Finish(commandQueue As CommandQueueHandle)
         errCode = clFinish(commandQueue)
         CheckErr(errCode)
@@ -109,18 +59,24 @@ Partial Public Module ClMethods
         CheckErr(errCode)
     End Sub
 
-    Public Function GetCommandQueueInfo(commandQueue As CommandQueueHandle, paramKind As CommandQueueInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetCommandQueueInfo(commandQueue, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetCommandQueueInfo(commandQueue As CommandQueueHandle, paramKind As CommandQueueInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetCommandQueueInfo(commandQueue, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetCommandQueueInfo(commandQueue, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetContextInfo(context As ContextHandle, paramKind As ContextInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetContextInfo(context, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetContextInfo(context As ContextHandle, paramKind As ContextInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetContextInfo(context, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetContextInfo(context, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
     Public Function GetDeviceIDs(platform As PlatformHandle, deviceType As DeviceType, numEntries As UInt32, devices As DeviceHandle()) As UInt32
@@ -130,57 +86,78 @@ Partial Public Module ClMethods
         Return numDevices
     End Function
 
-    Public Function GetDeviceInfo(device As DeviceHandle, paramKind As DeviceInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetDeviceInfo(device, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetDeviceInfo(device As DeviceHandle, paramKind As DeviceInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetDeviceInfo(device, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetDeviceInfo(device, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetEventInfo(eventHandle As EventHandle, paramKind As EventInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetEventInfo(eventHandle, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetEventInfo(eventHandle As EventHandle, paramKind As EventInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetEventInfo(eventHandle, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetEventInfo(eventHandle, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetEventProfilingInfo(eventHandle As EventHandle, paramKind As ProfilingInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetEventProfilingInfo(eventHandle, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetEventProfilingInfo(eventHandle As EventHandle, paramKind As ProfilingInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetEventProfilingInfo(eventHandle, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetEventProfilingInfo(eventHandle, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
     Public Function GetExtensionFunctionAddress(ByRef funcName As String) As IntPtr
         Return clGetExtensionFunctionAddress(funcName)
     End Function
 
-    Public Function GetImageInfo(image As IntPtr, paramType As ImageInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetImageInfo(image, paramType, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetImageInfo(image As IntPtr, paramType As ImageInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetImageInfo(image, paramType, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetImageInfo(image, paramType, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetKernelInfo(kernel As KernelHandle, paramKind As KernelInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetKernelInfo(kernel, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetKernelInfo(kernel As KernelHandle, paramKind As KernelInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetKernelInfo(kernel, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetKernelInfo(kernel, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetKernelWorkGroupInfo(kernel As KernelHandle, device As DeviceHandle, paramKind As KernelWorkGroupInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetKernelWorkGroupInfo(kernel, device, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetKernelWorkGroupInfo(kernel As KernelHandle, device As DeviceHandle, paramKind As KernelWorkGroupInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetKernelWorkGroupInfo(kernel, device, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetKernelWorkGroupInfo(kernel, device, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetMemObjectInfo(memObj As IntPtr, paramKind As MemInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetMemObjectInfo(memObj, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetMemObjectInfo(memObj As IntPtr, paramKind As MemInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetMemObjectInfo(memObj, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetMemObjectInfo(memObj, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
     Public Function GetPlatformIDs(numEntries As UInt32, platforms As PlatformHandle()) As UInt32
@@ -190,32 +167,44 @@ Partial Public Module ClMethods
         Return numPlatforms
     End Function
 
-    Public Function GetPlatformInfo(platform As PlatformHandle, paramKind As PlatformInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetPlatformInfo(platform, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetPlatformInfo(platform As PlatformHandle, paramKind As PlatformInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetPlatformInfo(platform, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetPlatformInfo(platform, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetProgramBuildInfo(program As ProgramHandle, device As DeviceHandle, paramKind As ProgramBuildInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetProgramBuildInfo(program, device, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetProgramBuildInfo(program As ProgramHandle, device As DeviceHandle, paramKind As ProgramBuildInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetProgramBuildInfo(program, device, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetProgramBuildInfo(program, device, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetProgramInfo(program As ProgramHandle, paramKind As ProgramInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetProgramInfo(program, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetProgramInfo(program As ProgramHandle, paramKind As ProgramInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetProgramInfo(program, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetProgramInfo(program, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
-    Public Function GetSamplerInfo(sampler As SamplerHandle, paramKind As SamplerInfo, paramValueSize As SizeT, paramValue As IntPtr) As SizeT
-        Dim paramValueSizeRet As SizeT = Nothing
-        Dim errCode = clGetSamplerInfo(sampler, paramKind, paramValueSize, paramValue, paramValueSizeRet)
+    Public Function GetSamplerInfo(sampler As SamplerHandle, paramKind As SamplerInfo) As InfoBuffer
+        Dim size As SizeT
+        errCode = clGetSamplerInfo(sampler, paramKind, 0, Nothing, size)
+        Dim sizeInt32 = size.SignedValue.ToInt32
+        Dim info = InfoBuffer.Alloc(sizeInt32)
+        errCode = clGetSamplerInfo(sampler, paramKind, size, info.Ptr, size)
         CheckErr(errCode)
-        Return paramValueSizeRet
+        Return info
     End Function
 
     Public Function GetSupportedImageFormats(context As ContextHandle, flags As MemFlags, imageType As MemObjectType, numEntries As UInt32, imageFormats As ImageFormat()) As UInt32
@@ -237,6 +226,36 @@ Partial Public Module ClMethods
 
     Public Sub ReleaseEvent(eventHandle As EventHandle)
         errCode = clReleaseEvent(eventHandle)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub ReleaseKernel(kernel As KernelHandle)
+        errCode = clReleaseKernel(kernel)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub ReleaseMemObject(memObj As ClBuffer)
+        errCode = clReleaseMemObject(memObj)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub ReleaseProgram(program As ProgramHandle)
+        errCode = clReleaseProgram(program)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub ReleaseSampler(sampler As SamplerHandle)
+        errCode = clReleaseSampler(sampler)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainCommandQueue(commandQueue As CommandQueueHandle)
+        errCode = clRetainCommandQueue(commandQueue)
+        CheckErr(errCode)
+    End Sub
+
+    Public Sub RetainContext(context As ContextHandle)
+        errCode = clRetainContext(context)
         CheckErr(errCode)
     End Sub
 
@@ -392,6 +411,25 @@ Partial Public Module ClMethods
     Public Function EnqueueUnmapMemObject(commandQueue As CommandQueueHandle, memObj As IntPtr, mappedPtr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
         Dim evt As EventHandle = Nothing
         Dim errCode = clEnqueueUnmapMemObject(commandQueue, memObj, mappedPtr, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Sub EnqueueWaitForEvents(commandQueue As CommandQueueHandle, numEventsInWaitList As UInt32, eventWaitList As EventHandle())
+        errCode = clEnqueueWaitForEvents(commandQueue, numEventsInWaitList, eventWaitList)
+        CheckErr(errCode)
+    End Sub
+
+    Public Function EnqueueWriteBuffer(commandQueue As CommandQueueHandle, buffer As ClBuffer, blockingWrite As Boolean, offsetInBytes As SizeT, lengthInBytes As SizeT, ptr As IntPtr, numEventsInWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueWriteBuffer(commandQueue, buffer, blockingWrite, offsetInBytes, lengthInBytes, ptr, numEventsInWaitList, eventWaitList, evt)
+        CheckErr(errCode)
+        Return evt
+    End Function
+
+    Public Function EnqueueWriteImage(commandQueue As CommandQueueHandle, image As ClBuffer, blockingWrite As Boolean, origin As SizeT(), region As SizeT(), rowPitch As SizeT, slicePitch As SizeT, ptr As IntPtr, numEventsIntWaitList As UInt32, eventWaitList As EventHandle()) As EventHandle
+        Dim evt As EventHandle = Nothing
+        Dim errCode = clEnqueueWriteImage(commandQueue, image, blockingWrite, origin, region, rowPitch, slicePitch, ptr, numEventsIntWaitList, eventWaitList, evt)
         CheckErr(errCode)
         Return evt
     End Function
