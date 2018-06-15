@@ -5,6 +5,7 @@ Namespace Native
     <HideModuleName>
     Public Module UnsafeNativeMethods
 
+        <WrapAsExtension>
         Public Declare Function clBuildProgram Lib "opencl" (
             program As ProgramHandle,
             numDevices As UInteger,
@@ -14,6 +15,7 @@ Namespace Native
             userData As IntPtr
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clCreateBuffer Lib "opencl" (
             context As ContextHandle,
             flags As MemFlags,
@@ -22,6 +24,7 @@ Namespace Native
             <Out> ByRef errcodeRet As ErrorCode
         ) As ClBuffer
 
+        <WrapAsExtension>
         Public Declare Function clCreateCommandQueue Lib "opencl" (
             context As ContextHandle,
             device As DeviceHandle,
@@ -29,6 +32,7 @@ Namespace Native
             <Out> ByRef errorCode As ErrorCode
         ) As CommandQueueHandle
 
+        <WrapAsExtension>
         Public Declare Function clCreateContext Lib "opencl" (
             properties As ContextProperty(),
             numDevices As UInteger,
@@ -38,6 +42,7 @@ Namespace Native
             <Out> ByRef errcodeRet As ErrorCode
         ) As ContextHandle
 
+        <WrapAsExtension>
         Public Declare Function clCreateContextFromType Lib "opencl" (
             properties As ContextProperty(),
             deviceType As DeviceType,
@@ -46,6 +51,7 @@ Namespace Native
             <Out> ByRef errcodeRet As ErrorCode
         ) As ContextHandle
 
+        <WrapAsExtension>
         Public Declare Function clCreateImage2D Lib "opencl" (
             context As ContextHandle,
             flags As MemFlags,
@@ -57,6 +63,7 @@ Namespace Native
             <Out> ByRef errcodeRet As ErrorCode
         ) As ClBuffer
 
+        <WrapAsExtension>
         Public Declare Function clCreateImage3D Lib "opencl" (
             context As ContextHandle,
             flags As MemFlags,
@@ -70,12 +77,14 @@ Namespace Native
             <Out> ByRef errcodeRet As ErrorCode
         ) As ClBuffer
 
+        <WrapAsExtension>
         Public Declare Function clCreateKernel Lib "opencl" (
             program As ProgramHandle,
             kernelName As String,
             <Out> ByRef errcodeRet As ErrorCode
         ) As KernelHandle
 
+        <WrapAsExtension>
         Public Declare Function clCreateKernelsInProgram Lib "opencl" (
             program As ProgramHandle,
             numKernels As UInteger,
@@ -83,6 +92,7 @@ Namespace Native
             <Out> ByRef numKernelsRet As UInteger
         ) As KernelHandle
 
+        <WrapAsExtension>
         Public Declare Function clCreateProgramWithBinary Lib "opencl" (
             context As ContextHandle,
             numDevices As UInteger,
@@ -93,6 +103,7 @@ Namespace Native
             <Out> ByRef errcodeRet As ErrorCode
         ) As ProgramHandle
 
+        <WrapAsExtension>
         Public Declare Function clCreateProgramWithSource Lib "opencl" (
             context As ContextHandle,
             count As UInteger,
@@ -101,6 +112,7 @@ Namespace Native
             <Out> ByRef errcodeRet As ErrorCode
         ) As ProgramHandle
 
+        <WrapAsExtension>
         Public Declare Function clCreateSampler Lib "opencl" (
             context As ContextHandle,
             normalizedCoords As Boolean,
@@ -109,10 +121,12 @@ Namespace Native
             <Out> ByRef errCodeRet As ErrorCode
         ) As SamplerHandle
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueBarrier Lib "opencl" (
             commandQueue As CommandQueueHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueCopyBuffer Lib "opencl" (
             commandQueue As CommandQueueHandle,
             srcBuffer As ClBuffer,
@@ -125,6 +139,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueCopyBufferToImage Lib "opencl" (
             commandQueue As CommandQueueHandle,
             srcBuffer As ClBuffer,
@@ -137,6 +152,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueCopyImage Lib "opencl" (
             commandQueue As CommandQueueHandle,
             srcImage As IntPtr,
@@ -149,6 +165,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueCopyImageToBuffer Lib "opencl" (
             commandQueue As CommandQueueHandle,
             srcImage As IntPtr,
@@ -161,6 +178,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueMapBuffer Lib "opencl" (
             commandQueue As CommandQueueHandle,
             buffer As ClBuffer,
@@ -174,6 +192,7 @@ Namespace Native
             <Out> ByRef errCodeRet As ErrorCode
         ) As IntPtr
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueMapImage Lib "opencl" (
             commandQueue As CommandQueueHandle,
             image As IntPtr,
@@ -189,11 +208,13 @@ Namespace Native
             <Out> ByRef errCodeRet As ErrorCode
         ) As IntPtr
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueMarker Lib "opencl" (
             commandQueue As CommandQueueHandle,
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueNDRangeKernel Lib "opencl" (
             commandQueue As CommandQueueHandle,
             kernel As KernelHandle,
@@ -206,6 +227,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueReadBuffer Lib "opencl" (
             commandQueue As CommandQueueHandle,
             buffer As ClBuffer,
@@ -218,6 +240,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueReadImage Lib "opencl" (
             commandQueue As CommandQueueHandle,
             image As ClBuffer,
@@ -232,6 +255,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueTask Lib "opencl" (
             commandQueue As CommandQueueHandle,
             kernel As KernelHandle,
@@ -240,6 +264,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueUnmapMemObject Lib "opencl" (
             commandQueue As CommandQueueHandle,
             memObj As IntPtr,
@@ -249,12 +274,14 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueWaitForEvents Lib "opencl" (
             commandQueue As CommandQueueHandle,
             numEventsInWaitList As UInteger,
             eventWaitList As EventHandle()
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueWriteBuffer Lib "opencl" (
             commandQueue As CommandQueueHandle,
             buffer As ClBuffer,
@@ -267,6 +294,7 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clEnqueueWriteImage Lib "opencl" (
             commandQueue As CommandQueueHandle,
             image As ClBuffer,
@@ -281,14 +309,17 @@ Namespace Native
             <Out> ByRef evt As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clFinish Lib "opencl" (
             commandQueue As CommandQueueHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clFlush Lib "opencl" (
             commandQueue As CommandQueueHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetCommandQueueInfo Lib "opencl" (
             commandQueue As CommandQueueHandle,
             paramKind As CommandQueueInfo,
@@ -297,6 +328,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetContextInfo Lib "opencl" (
             context As ContextHandle,
             paramKind As ContextInfo,
@@ -305,6 +337,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetDeviceIDs Lib "opencl" (
             platform As PlatformHandle,
             deviceType As DeviceType,
@@ -313,6 +346,7 @@ Namespace Native
             <Out> ByRef numDevices As UInteger
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetDeviceInfo Lib "opencl" (
             device As DeviceHandle,
             paramKind As DeviceInfo,
@@ -321,6 +355,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetEventInfo Lib "opencl" (
             eventHandle As EventHandle,
             paramKind As EventInfo,
@@ -329,6 +364,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetEventProfilingInfo Lib "opencl" (
             eventHandle As EventHandle,
             paramKind As ProfilingInfo,
@@ -349,6 +385,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetKernelInfo Lib "opencl" (
             kernel As KernelHandle,
             paramKind As KernelInfo,
@@ -357,6 +394,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetKernelWorkGroupInfo Lib "opencl" (
             kernel As KernelHandle,
             device As DeviceHandle,
@@ -380,6 +418,7 @@ Namespace Native
             <Out> ByRef numPlatforms As UInteger
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetPlatformInfo Lib "opencl" (
             platform As PlatformHandle,
             paramKind As PlatformInfo,
@@ -388,6 +427,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetProgramBuildInfo Lib "opencl" (
             program As ProgramHandle,
             device As DeviceHandle,
@@ -397,6 +437,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetProgramInfo Lib "opencl" (
             program As ProgramHandle,
             paramKind As ProgramInfo,
@@ -405,6 +446,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetSamplerInfo Lib "opencl" (
             sampler As SamplerHandle,
             paramKind As SamplerInfo,
@@ -413,6 +455,7 @@ Namespace Native
             <Out> ByRef paramValueSizeRet As SizeT
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clGetSupportedImageFormats Lib "opencl" (
             context As ContextHandle,
             flags As MemFlags,
@@ -422,46 +465,57 @@ Namespace Native
             <Out> ByRef numImageFormats As UInteger
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clReleaseCommandQueue Lib "opencl" (
             commandQueue As CommandQueueHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clReleaseContext Lib "opencl" (
             context As ContextHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clReleaseEvent Lib "opencl" (
             eventHandle As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clReleaseKernel Lib "opencl" (
             kernel As KernelHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clReleaseMemObject Lib "opencl" (
             memObj As ClBuffer
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clReleaseProgram Lib "opencl" (
             program As ProgramHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clReleaseSampler Lib "opencl" (
             sampler As SamplerHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clRetainCommandQueue Lib "opencl" (
             commandQueue As CommandQueueHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clRetainContext Lib "opencl" (
             context As ContextHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clRetainEvent Lib "opencl" (
             eventHandle As EventHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clRetainKernel Lib "opencl" (
             kernel As KernelHandle
         ) As ErrorCode
@@ -470,14 +524,17 @@ Namespace Native
             memObj As IntPtr
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clRetainProgram Lib "opencl" (
             program As ProgramHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clRetainSampler Lib "opencl" (
             sampler As SamplerHandle
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clSetCommandQueueProperty Lib "opencl" (
             commandQueue As CommandQueueHandle,
             properties As CommandQueueProperties,
@@ -485,6 +542,7 @@ Namespace Native
             <Out> ByRef oldProperties As CommandQueueProperties
         ) As ErrorCode
 
+        <WrapAsExtension>
         Public Declare Function clSetKernelArg Lib "opencl" (
             kernel As KernelHandle,
             argIndex As UInteger,

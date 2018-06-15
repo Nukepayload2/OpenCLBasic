@@ -25,6 +25,7 @@ Partial Public Module ClMethods
         Return platformIds
     End Function
 
+    <Extension>
     Public Function GetDeviceIDs(platform As PlatformHandle, deviceType As DeviceType) As DeviceHandle()
         Dim deviceCount As UInteger
         errCode = clGetDeviceIDs(platform, deviceType, 0, Nothing, deviceCount)
@@ -36,6 +37,7 @@ Partial Public Module ClMethods
         Return deviceIds
     End Function
 
+    <Extension>
     Public Function GetDeviceInfo(
         device As DeviceHandle,
         paramKind As DeviceInfo
@@ -51,6 +53,7 @@ Partial Public Module ClMethods
         Return info
     End Function
 
+    <Extension>
     Public Function GetProgramBuildInfo(
         program As ProgramHandle,
         device As DeviceHandle,

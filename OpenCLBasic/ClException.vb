@@ -12,4 +12,5 @@
     Public Sub New(errorCode As ErrorCode, message As String, inner As Exception)
         MyBase.New($"{errorCode}: {message}", inner)
     End Sub
+
 End Class

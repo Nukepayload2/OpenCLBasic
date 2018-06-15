@@ -12,8 +12,10 @@ Module Program
                  Where m.Name.StartsWith("cl")
         Dim sb As New IndentStringBuilder
         sb.AppendLine("Option Strict On
+Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
 Imports OpenCLBasic.Native
+
 ' 这个文件由代码生成。重新执行 CodeGen 会覆盖此文件。
 Partial Public Module ClMethods").IncreaseIndent()
 
@@ -26,6 +28,9 @@ Partial Public Module ClMethods").IncreaseIndent()
                                                       Select n = g.Name + If(g.GetGenericParameterConstraints.FirstOrDefault?.Equals(GetType(ValueType)), " As Structure", "")) + ")"
                 name += "(Of " + String.Join(", ", From g In method.GetGenericArguments
                                                    Select n = g.Name) + ")"
+            End If
+            If method.GetCustomAttribute(Of WrapAsExtensionAttribute) IsNot Nothing Then
+                sb.IndentAppendLine("<Extension>")
             End If
             If param.Length > 0 Then
                 If method.ReturnType.Equals(GetType(ErrorCode)) Then
