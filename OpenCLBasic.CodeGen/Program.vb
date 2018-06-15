@@ -34,7 +34,7 @@ Partial Public Module ClMethods").IncreaseIndent()
             End If
             If param.Length > 0 Then
                 If method.ReturnType.Equals(GetType(ErrorCode)) Then
-                    If param(param.Length - 1).ParameterType.IsByRef Then
+                    If param(param.Length - 1).ParameterType.IsByRef AndAlso param(param.Length - 1).IsOut Then
                         WriteSubAsFunction(sb, name, genName, param)
                     Else
                         WriteSub(sb, name, genName, param)
@@ -56,6 +56,39 @@ Partial Public Module ClMethods").IncreaseIndent()
     End Sub
 
     Private Sub WriteSubAsFunction(sb As IndentStringBuilder, name As String, genName As String, params() As ParameterInfo)
+        If params.Length > 3 Then
+            Dim valSize = params(params.Length - 3)
+            If valSize.Name = "paramValueSize" AndAlso valSize.ParameterType.Equals(GetType(SizeT)) Then
+                Dim val = params(params.Length - 2)
+                If val.Name = "paramValue" AndAlso val.ParameterType.Equals(GetType(IntPtr)) Then
+                    Dim valSizeOut = params(params.Length - 1)
+                    If valSizeOut.Name = "paramValueSizeRet" AndAlso valSizeOut.ParameterType.Equals(GetType(SizeT).MakeByRefType) Then
+                        sb.IndentAppend("Public Function ").
+                           Append(genName).
+                           Append("(").
+                           Append(String.Join(", ", From p In params
+                                                    Take params.Length - 3
+                                                    Select GetParamDecl(p))).
+                           AppendLine(") As InfoBuffer")
+                        Dim paramExt = String.Join(", ", From p In params
+                                                         Take params.Length - 3
+                                                         Select PreserveName(p.Name))
+                        sb.IncreaseIndent()
+                        sb.IndentAppendLine("Dim size As SizeT").
+                           IndentAppendLine($"errCode = cl{name}({paramExt}, 0, Nothing, size)").
+                           IndentAppendLine("Dim sizeInt32 = size.SignedValue.ToInt32").
+                           IndentAppendLine("Dim info = InfoBuffer.Alloc(sizeInt32)").
+                           IndentAppendLine($"errCode = cl{name}({paramExt}, size, info.Ptr, size)").
+                           IndentAppendLine("CheckErr(errCode)").
+                           IndentAppendLine("Return info")
+                        sb.DecreaseIndent()
+                        sb.IndentAppendLine("End Function").
+                           AppendLine()
+                        Return
+                    End If
+                End If
+            End If
+        End If
         Dim paramCodes = From p In params
                          Take params.Length - 1
                          Select GetParamDecl(p)
