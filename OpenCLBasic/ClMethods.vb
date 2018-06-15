@@ -37,36 +37,4 @@ Partial Public Module ClMethods
         Return deviceIds
     End Function
 
-    <Extension>
-    Public Function GetDeviceInfo(
-        device As DeviceHandle,
-        paramKind As DeviceInfo
-    ) As InfoBuffer
-        Dim size As SizeT
-        errCode = clGetDeviceInfo(device, paramKind, 0, Nothing, size)
-        Dim sizeInt32 = size.SignedValue.ToInt32
-
-        Dim info = InfoBuffer.Alloc(sizeInt32)
-        errCode = clGetDeviceInfo(device, paramKind, size, info.Ptr, size)
-
-        CheckErr(errCode)
-        Return info
-    End Function
-
-    <Extension>
-    Public Function GetProgramBuildInfo(
-        program As ProgramHandle,
-        device As DeviceHandle,
-        paramKind As ProgramBuildInfo
-    ) As InfoBuffer
-        Dim size As SizeT
-        errCode = clGetProgramBuildInfo(program, device, paramKind, 0, Nothing, size)
-        Dim sizeInt32 = size.SignedValue.ToInt32
-
-        Dim info = InfoBuffer.Alloc(sizeInt32)
-        errCode = clGetProgramBuildInfo(program, device, paramKind, size, info.Ptr, size)
-
-        CheckErr(errCode)
-        Return info
-    End Function
 End Module
