@@ -346,6 +346,7 @@ Public Structure InfoBuffer
 
     Public Ptr As IntPtr
     Public Size As Integer
+    Friend _hGc As GCHandle
     Friend _storage As Byte()
 
     Public Sub New(storage As Byte())
@@ -354,9 +355,11 @@ Public Structure InfoBuffer
         End If
 
         _storage = storage
-        Ptr = Marshal.UnsafeAddrOfPinnedArrayElement(storage, 0)
+        _hGc = GCHandle.Alloc(storage, GCHandleType.Pinned)
+        Ptr = _hGc.AddrOfPinnedObject
         Size = storage.Length
     End Sub
+
     ''' <summary>
     ''' 创建一个托管的数组，并用这个数组的地址和长度初始化一个信息缓冲区。
     ''' </summary>
@@ -367,9 +370,11 @@ Public Structure InfoBuffer
         Dim buffer As New InfoBuffer
         ReDim buffer._storage(size - 1)
         buffer.Size = size
-        buffer.Ptr = Marshal.UnsafeAddrOfPinnedArrayElement(buffer._storage, 0)
+        buffer._hGc = GCHandle.Alloc(buffer._storage, GCHandleType.Pinned)
+        buffer.Ptr = buffer._hGc.AddrOfPinnedObject
         Return buffer
     End Function
+
     ''' <summary>
     ''' 让垃圾回收器快点回收信息缓冲区所用的托管数组。
     ''' </summary>

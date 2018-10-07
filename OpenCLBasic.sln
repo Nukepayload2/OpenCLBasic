@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "OpenCLBasic.Demo", "OpenClBasic.Demo\OpenCLBasic.Demo.vbproj", "{4CB60259-855E-4E70-95A5-9283100DCB42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,14 @@ Global
 		{0AD5145B-1679-442C-8A8C-18725A89DC7D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0AD5145B-1679-442C-8A8C-18725A89DC7D}.Release|x64.ActiveCfg = Release|Any CPU
 		{0AD5145B-1679-442C-8A8C-18725A89DC7D}.Release|x64.Build.0 = Release|Any CPU
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Debug|x64.ActiveCfg = Debug|x64
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Debug|x64.Build.0 = Debug|x64
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Release|x64.ActiveCfg = Release|x64
+		{4CB60259-855E-4E70-95A5-9283100DCB42}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

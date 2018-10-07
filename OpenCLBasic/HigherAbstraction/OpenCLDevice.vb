@@ -22,9 +22,11 @@ Public Class OpenCLDevice
                 Dim deviceIds = GetDeviceIDs(platform, DeviceType.Gpu)
                 For Each dev In From d In deviceIds
                                 Where GetDeviceInfo(d, DeviceInfo.ImageSupport).Read(Of Integer) = 1
-                    Console.Write(GetDeviceInfo(dev, DeviceInfo.Vendor).ToAnsiString)
-                    Console.Write(" - ")
-                    Console.WriteLine(GetDeviceInfo(dev, DeviceInfo.Name).ToAnsiString)
+                    'Console.Write(GetDeviceInfo(dev, DeviceInfo.Vendor).ToAnsiString)
+                    'Console.Write(" - ")
+                    'Console.WriteLine(GetDeviceInfo(dev, DeviceInfo.Name).ToAnsiString)
+                    'Console.Write(", 最大工作组大小: ")
+                    'Console.WriteLine(GetDeviceInfo(dev, DeviceInfo.MaxWorkGroupSize).Read(Of Integer))
                     Return New OpenCLDevice(dev)
                 Next
             Catch ex As Exception

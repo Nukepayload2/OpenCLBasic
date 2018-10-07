@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing
 Imports System.Runtime.InteropServices
+Imports OpenCLBasic.MarshalHelpers
 
 Public Class CommandList
     Implements IOpenCLResourceCreatorWithContext, IDisposable
@@ -12,7 +13,7 @@ Public Class CommandList
     Shared s_intPtrSize As SizeT = Marshal.SizeOf(GetType(IntPtr))
 
     Private _pStack As UInteger = 0
-    Private _maxWidth, _maxHeight, _maxLength As Integer
+    Private _maxWidth, _maxHeight, _maxLength, _maxLengthAligned As Integer
 
     Private ReadOnly _copyBackMem As New Stack(Of ClBuffer)
     Private ReadOnly _disposeMem As New List(Of ClBuffer)
@@ -20,6 +21,11 @@ Public Class CommandList
     Private ReadOnly _method As OpenCLMethod
     Private ReadOnly _cmdQueue As CommandQueueHandle
     Private ReadOnly clImageFormat As New ImageFormat(ChannelOrder.RGBA, ChannelType.Unsigned_Int8)
+
+    ''' <summary>
+    ''' Default = 4
+    ''' </summary>
+    Public Property InputOutputBufferElementSize As Integer = 4
 
     Public ReadOnly Property Device As DeviceHandle Implements IOpenCLResourceCreator.Device
         Get
@@ -80,6 +86,9 @@ Public Class CommandList
         _disposeMem.Add(mem)
     End Sub
 
+    ''' <summary>
+    ''' Load input data on the opencl kernel function's evaluation stack.
+    ''' </summary>
     Public Sub LoadInput(ptr As IntPtr, length As Integer)
         Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.ReadOnly, length, ptr)
 
@@ -92,6 +101,29 @@ Public Class CommandList
         _disposeMem.Add(mem)
     End Sub
 
+    ''' <summary>
+    ''' Load input data on the opencl kernel function's evaluation stack.
+    ''' </summary>
+    Public Sub LoadInputAligned(ptr As IntPtr, length As Integer)
+        Dim blockSize = CInt(MaxLocalWorkGroupSize(0)) * InputOutputBufferElementSize
+        Dim lengthAligned = CInt(Math.Ceiling(length / blockSize) * blockSize)
+
+        Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.ReadOnly,
+                               lengthAligned, ptr)
+
+        SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
+        _pStack += 1UI
+
+        EnqueueWriteBuffer(_cmdQueue, mem, True, 0, length, ptr, 0, Nothing)
+
+        _maxLength = Math.Max(_maxLength, length)
+        _maxLengthAligned = Math.Max(_maxLengthAligned, lengthAligned)
+        _disposeMem.Add(mem)
+    End Sub
+
+    ''' <summary>
+    ''' Push retval buffer on the opencl kernel function's evaluation stack.
+    ''' </summary>
     Public Sub LoadOutput(ptr As IntPtr, length As Integer)
         Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.WriteOnly,
                                length, ptr)
@@ -107,11 +139,58 @@ Public Class CommandList
     End Sub
 
     ''' <summary>
+    ''' Push retval buffer on the opencl kernel function's evaluation stack. On Create Align the length to <see cref="InputOutputBufferElementSize"/>.
+    ''' </summary>
+    Public Sub LoadOutputAligned(ptr As IntPtr, length As Integer)
+        Dim blockSize = CInt(MaxLocalWorkGroupSize(0)) * InputOutputBufferElementSize
+        Dim lengthAligned = CInt(Math.Ceiling(length / blockSize) * blockSize)
+
+        Dim mem = CreateBuffer(_method.DeviceContext, MemFlags.WriteOnly,
+                               lengthAligned, ptr)
+
+        SetKernelArg(_method.Kernel, _pStack, s_intPtrSize, mem)
+        _pStack += 1UI
+
+        _copyBackMem.Push(mem)
+        _copyBackPtr.Push(ptr)
+
+        _maxLength = Math.Max(_maxLength, length)
+        _maxLengthAligned = Math.Max(_maxLengthAligned, lengthAligned)
+        _disposeMem.Add(mem)
+    End Sub
+
+    ''' <summary>
     ''' 以处理一组数据的方式调用 OpenCL 方法。
     ''' </summary>
+    Public Sub CallOneDimensionAligned()
+        Dim localWs As SizeT() = MaxLocalWorkGroupSize
+        Dim globalWs As SizeT() = {_maxLengthAligned \ InputOutputBufferElementSize}
+
+        _cmdQueue.EnqueueNDRangeKernel(_method.Kernel, 1, Nothing, globalWs, localWs, 0, Nothing)
+        _cmdQueue.Finish
+
+        Do While _copyBackMem.Count > 0
+            _cmdQueue.EnqueueReadBuffer(_copyBackMem.Pop, True, Nothing, _maxLength,
+                              _copyBackPtr.Pop, 0, Nothing)
+        Loop
+
+        For i = 0 To _disposeMem.Count - 1
+            _disposeMem(i).ReleaseMemObject()
+        Next
+        _disposeMem.Clear()
+
+        _maxLength = 0
+        _pStack = 0
+    End Sub
+
+    ''' <summary>
+    ''' Use <see cref="CallOneDimensionAligned"/> instead.
+    ''' </summary>
+    <Obsolete>
     Public Sub [Call](elementSize As Integer)
         Dim globalWs As SizeT() = {_maxLength \ elementSize}
-        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 1, Nothing, globalWs, Nothing, 0, Nothing)
+        Dim localWs As SizeT() = Nothing
+        EnqueueNDRangeKernel(_cmdQueue, _method.Kernel, 1, Nothing, globalWs, localWs, 0, Nothing)
         Finish(_cmdQueue)
 
         Do While _copyBackMem.Count > 0
@@ -127,6 +206,17 @@ Public Class CommandList
         _maxLength = 0
         _pStack = 0
     End Sub
+
+    Private _size As SizeT()
+
+    Private ReadOnly Property MaxLocalWorkGroupSize As SizeT()
+        Get
+            If _size Is Nothing Then
+                _size = {Device.GetDeviceInfo(DeviceInfo.MaxWorkItemSizes).Read(Of Integer)}
+            End If
+            Return _size
+        End Get
+    End Property
 
     ''' <summary>
     ''' 以处理图片的方式调用 OpenCL 方法。
