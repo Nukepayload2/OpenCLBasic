@@ -14,6 +14,8 @@ Public Class App
         destDir$,
         <Display(Name:="raw", Description:="使用 OpenCL 时不要用 Imaging 写法，而是用直接处理图像后缓冲区的写法。")>
         Optional useImaging As Boolean = True,
+        <Display(Name:="soft", Description:="使用 CPU 单核计算。")>
+        Optional useCpuSingleCore As Boolean = False,
         <Display(Name:="repeat", ShortName:="r", Description:="指定重复次数, 用于评估当前计算机采取哪种计算模式效率更高。")>
         Optional repeatCount As Integer = 1
     )
@@ -22,14 +24,20 @@ Public Class App
         Console.WriteLine("版权所有 (C) 2017-2018 Nukepayload2。保留所有权利。")
         Dim fileCount = 0
         Dim timer As New Stopwatch
-        If useImaging Then
-            Console.WriteLine("成像处理。")
+        Dim calcMethod As IImageProc
+        If useCpuSingleCore Then
+            calcMethod = New ImageDiffBlendCpu
+            Console.WriteLine("CPU 单核计算。")
+        ElseIf useImaging Then
+            calcMethod = New ImageDiffBlend
+            Console.WriteLine("GPU 成像处理。")
         Else
-            Console.WriteLine("直接处理像素点。")
+            calcMethod = New ImageDiffBlendCalc
+            Console.WriteLine("GPU 直接处理像素点。")
         End If
         Console.WriteLine("重复图片处理次数: " & repeatCount)
         timer.Start()
-        Using clDelegate = If(useImaging, DirectCast(New ImageDiffBlend, IImageProc), New ImageDiffBlendCalc)
+        Using clDelegate = calcMethod
             For i = 1 To repeatCount
                 For Each imageA In Directory.GetFiles(srcDir1)
                     Dim fn = Path.GetFileName(imageA)

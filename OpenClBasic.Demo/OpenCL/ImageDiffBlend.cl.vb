@@ -3,7 +3,6 @@ Imports System.Drawing.Imaging
 Imports System.IO
 Imports System.Reflection
 Imports System.Text
-Imports OpenCLBasic
 
 Public Class ImageDiffBlend
     Implements IImageProc
